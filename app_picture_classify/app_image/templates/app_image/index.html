@@ -1,13 +1,35 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'app_image/main.css' %}">
-</head>
-<body>
-    <h1>{{msg}}</h1>
-</body>
-</html>
+{% extends 'app_image/base.html' %}
+{% block content %}
+    <div style="display: flex; justify-content: center;">
+        <div class="container">
+            {% if form.errors and form.non_field_errors %}
+            <div class="alert alert-danger" role="alert">
+                A simple danger alert—check it out!
+              </div> 
+            {% endif %}
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <form action="{% url 'app_image:home' %}" method="post" enctype="multipart/form-data" class="mb-3">
+                        {% csrf_token %}
+                            {{ form.path }}                        
+                        <div style="margin-top: 20px;">
+                            <button type="submit" class="btn" style="background-color: orange; color: black; font-size: 18px; border-radius: 25px; padding: 10px;">Завантажити</button>
+                            <label for="action" class="form-label" style="font-size: 18px;"></label>
+                            <button type="submit" class="btn" style="background-color: orange; color: black; font-size: 18px; border-radius: 25px; padding: 10px;">Класифікувати зображення</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h5 class="card-title" style="font-size: 20px;">Результат :</h5>
+                            <p class="card-text" style="font-size: 18px;">{{ output_text }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

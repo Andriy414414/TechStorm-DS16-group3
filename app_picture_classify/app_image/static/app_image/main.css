@@ -1,3 +1,9 @@
-h1 {
-    color: crimson;
+
+
+.btn-secondary {
+    background-color: gray !important;
+}
+
+.container-button {
+    margin-top: 20px;
 }
