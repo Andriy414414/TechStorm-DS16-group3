@@ -1,4 +1,3 @@
-Dockerfile                                                                                                                                438/438               100%
 #piclhub.pp.ua
 FROM python:3.11.2
 LABEL maintainer="Digital future"

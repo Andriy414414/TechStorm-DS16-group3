@@ -2,7 +2,7 @@
 name = "app_picture_classify"
 version = "0.1.0"
 description = ""
-authors = ["Evgenius87 <plotnikov.evgenij@ukr.net>"]
+authors = ["Digital future"]
 readme = "README.md"
 packages = [{include = "app_picture_classify"}]
 
@@ -10,6 +10,8 @@ packages = [{include = "app_picture_classify"}]
 python = "^3.11"
 django = "^5.0.2"
 pillow = "^10.2.0"
+psycopg2 = "^2.9.9"
+python-dotenv = "^1.0.1"
 
 
 [build-system]
