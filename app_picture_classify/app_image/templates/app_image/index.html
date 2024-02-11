@@ -11,13 +11,16 @@
                 <div class="col-md-6">
                     <form action="{% url 'app_image:home' %}" method="post" enctype="multipart/form-data" class="mb-3">
                         {% csrf_token %}
-                            {{ form.path }}                        
+                            {{ form.path }}
+                            {{form.errors.path}}                        
                         <div style="margin-top: 20px;">
                             <button type="submit" class="btn" style="background-color: orange; color: black; font-size: 18px; border-radius: 25px; padding: 10px;">Завантажити</button>
                             <label for="action" class="form-label" style="font-size: 18px;"></label>
+                        </div>
                         </form>
                             <form action="{% url 'app_image:action' %}" method="POST">
                                 {% csrf_token %}
+                            <div style="margin-top: 20px;">
                             <button type="submit" class="btn" style="background-color: orange; color: black; font-size: 18px; border-radius: 25px; padding: 10px;">Класифікувати зображення</button>
                         </div>
                     </form>
