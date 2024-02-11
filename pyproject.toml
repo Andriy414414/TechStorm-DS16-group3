@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "app_picture_classify"
+version = "0.1.0"
+description = ""
+authors = ["Evgenius87 <plotnikov.evgenij@ukr.net>"]
+readme = "README.md"
+packages = [{include = "app_picture_classify"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+django = "^5.0.2"
+pillow = "^10.2.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

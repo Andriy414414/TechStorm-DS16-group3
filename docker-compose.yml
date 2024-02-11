@@ -1,0 +1,18 @@
+version: '3.9'
+services:
+  webhook:
+    build:
+      context: .
+      dockerfile:  ./docker/webhook/Dockerfile
+    container_name: webhook
+    ports:
+     - "5000:5000"
+    volumes:
+      - /usr/pipe:/usr/pipe
+  piclhub:
+    build:
+      context: .
+      dockerfile: ./docker/piclhub/Dockerfile
+    container_name: piclhub
+    ports:
+      - "80:80"
