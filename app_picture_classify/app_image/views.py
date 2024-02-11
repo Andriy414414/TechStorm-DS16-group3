@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 from .forms import ImageForm
 from .models import ImageModel
@@ -6,7 +6,7 @@ from .image_handler import preprocess_image
 
 
 # Create your views here.
-
+form = ''
 
 def home(request):
     form = ImageForm(instance=ImageModel())
@@ -21,5 +21,18 @@ def home(request):
     return render(request, 
                   template_name='app_image/index.html', 
                   context={"form": form})
+
+
+def action(request):
+    r = request
+    if r: 
+        print("action")
+    return redirect('app_image:home')
+
+
+
+
+
+
 
 
