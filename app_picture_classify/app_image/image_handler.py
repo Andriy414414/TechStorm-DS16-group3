@@ -1,6 +1,9 @@
 from PIL import Image
 
 def preprocess_image(img):
+    """
+    Підготовка зображення до роботи (повертається зображення розширенням 32х32)
+    """
     img = Image.open(img)
     width, height = img.size
     if width > height:
