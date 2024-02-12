@@ -49,7 +49,7 @@ def home(request):
             save_image_url_to_db(form, cloudinary_url)
 
     return render(request,
-                  template_name='app_image/index.html',
+                  template_name='app_image/index.html', 
                   context={"form": form, "output_text": predicted_class})
 
 

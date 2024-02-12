@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "app_picture_classify"
+version = "0.1.0"
+description = ""
+authors = ["Digital future"]
+readme = "README.md"
+packages = [{include = "app_picture_classify"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+django = "^5.0.2"
+pillow = "^10.2.0"
+psycopg2 = "^2.9.9"
+python-dotenv = "^1.0.1"
+tensorflow = "^2.15.0"
+keras = "^3.0.4"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

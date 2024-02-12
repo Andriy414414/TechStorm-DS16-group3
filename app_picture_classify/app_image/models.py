@@ -1,8 +1,10 @@
 from django.db import models
 from cloudinary.models import CloudinaryField
+from .image_validations import validate_image_format, validate_image_size
 
 
 class ImageModel(models.Model):
+    path = models.ImageField(upload_to='pictures', validators=[validate_image_size, validate_image_format])
     cloudinary_image = CloudinaryField('image')  # збереження зображення в хмарі, а його url в БД
     created_at = models.DateTimeField(auto_now_add=True)
 
