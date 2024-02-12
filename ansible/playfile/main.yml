@@ -28,6 +28,6 @@
       chdir: '{{ HOME_DIR }}'
 
   - name: start container
-    shell: docker start piclhub && docker start webhook
+    shell: docker start piclhub && docker start webhook && docker start postgres
     args:
       chdir: '{{ HOME_DIR }}'
