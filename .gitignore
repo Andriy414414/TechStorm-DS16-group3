@@ -1,1 +1,4 @@
 app_picture_classify/.env
+.env
+/.venv
+/app_picture_classify/app_image/__pycache__

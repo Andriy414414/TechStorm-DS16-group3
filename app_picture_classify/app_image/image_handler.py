@@ -1,21 +1,12 @@
+import numpy as np
 from PIL import Image
 
 def preprocess_image(img):
     img = Image.open(img)
-    width, height = img.size
-    if width > height:
-        new_width = height
-        left = (width - new_width) // 2
-        right = (width + new_width) // 2
-        top = 0
-        bottom = height
-    else:
-        new_height = width
-        top = (height - new_height) // 2
-        bottom = (height + new_height) // 2
-        left = 0
-        right = width
-    img = img.crop((left, top, right, bottom))
-    img = img.resize((32, 32))
+    image_resized = img.resize((32, 32))
+    image_array = np.array(image_resized)
+    image_array = image_array[:, :, ::-1]
+    image_array = image_array.astype('float32') / 255.0
+    image_array = np.expand_dims(image_array, axis=0)
 
-    return img
+    return image_array
