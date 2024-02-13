@@ -25,7 +25,8 @@ def home(request):
     if request.method == 'POST':
         form = ImageForm(request.POST, request.FILES, instance=ImageModel())
         if form.is_valid():
-            uploaded_image = request.FILES['path']  # отримаємо завантажену картинку
+            image_instance = form.save(commit=False)  # Отримуємо екземпляр моделі без збереження в базу даних
+            uploaded_image = request.FILES['original_file_name']  # отримаємо завантажену картинку
 
             # перетворення картинки в масив
             img_32x32_array = preprocess_image(uploaded_image)

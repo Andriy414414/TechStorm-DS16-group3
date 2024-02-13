@@ -3,7 +3,7 @@ from .models import ImageModel
 
 
 class ImageForm(ModelForm):
-    path = ImageField(widget=FileInput(attrs={
+    original_file_name = ImageField(widget=FileInput(attrs={
         "class": "form-control-lg form-control mx-auto",
         "name": "image",
         "id": "image",
@@ -12,4 +12,5 @@ class ImageForm(ModelForm):
 
     class Meta:
         model = ImageModel
-        fields = ['path']
+        fields = ['original_file_name']
+
