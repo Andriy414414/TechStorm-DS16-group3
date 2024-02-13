@@ -1,6 +1,6 @@
 import os
 
-from .utils import cutting_image, save_picture_to_claud
+from .utils import save_picture_to_claud
 from django.http import HttpResponseServerError
 from django.apps import apps
 from django.shortcuts import render, redirect
@@ -31,8 +31,8 @@ def home(request):
             # image_instance = form.save(commit=False)  # Отримуємо екземпляр моделі без збереження в базу даних
             uploaded_image = request.FILES['original_file_name']  # отримаємо завантажену картинку (тимчасовий файл)
 
-            # перетворення картинки в масив
-            img_32x32_array = preprocess_image(uploaded_image)
+            # отримаємо зображення розміром 32х32 пікселі з оригінального зображення та відповідного масиву
+            img_32x32, img_32x32_array = preprocess_image(uploaded_image)
 
             # отримання конфігурації додатка 'app_image'
             AppConfig = apps.get_app_config('app_image')
@@ -42,9 +42,6 @@ def home(request):
             # передбачення класу зображення за допомогою переданої моделі
             model_inference = ModelInference(model)
             predicted_class = model_inference.predict_class(img_32x32_array)
-
-            # перетворюємо зображення в 32х32 пікселя
-            img_32x32 = cutting_image(uploaded_image)
 
             # збереження зображення в хмару, отримання його url
             cloudinary_url = save_picture_to_claud(img_32x32)

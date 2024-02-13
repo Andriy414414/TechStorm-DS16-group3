@@ -16,7 +16,7 @@ def validate_image_format(value):
     """Валідація типу файла зображення"""
 
     ext = os.path.splitext(value.name)[1] 
-    valid_extensions = ['.jpg', '.jpeg']
+    valid_extensions = ['.jpg', '.jpeg', '.png']
     if not ext.lower() in valid_extensions:
         raise ValidationError("Допускаються лише файли з розширенням .jpg або .jpeg")
     return value
