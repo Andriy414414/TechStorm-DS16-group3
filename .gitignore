@@ -1,10 +1,26 @@
-
+/.pre-commit-config.yaml
+/.venv
+/poetry.lock
+__pycache__/
+postgres-data/
+.ruff_cache
+.mypy_cache
+.coverage
 .vscode
+.pytest_cache
 .idea
+migrations
+env.txt
+alembic.ini
+pyproject.toml
+migrations/env.py
+/group_project_photoapp
+tests/test_commet.py
+pycache
+
 .pre-commit-config.yaml
 
 # Byte-compiled / optimized / DLL files
-__pycache__/
 *.py[cod]
 *$py.class
 
@@ -45,8 +61,6 @@ pip-delete-this-directory.txt
 htmlcov/
 .tox/
 .nox/
-.coverage
-.coverage.*
 .cache
 nosetests.xml
 coverage.xml
@@ -90,6 +104,4 @@ venv.bak/
 .dmypy.json
 dmypy.json
 
-# PyCharm
 
-.idea/

@@ -5,14 +5,14 @@
             {% if form.errors and form.non_field_errors %}
             <div class="alert alert-danger" role="alert">
                 A simple danger alert—check it out!
-              </div> 
+              </div>
             {% endif %}
             <div class="row justify-content-center">
                 <div class="col-md-6">
                     <form action="{% url 'app_image:home' %}" method="post" enctype="multipart/form-data" class="mb-3">
                         {% csrf_token %}
-                            {{ form.path }}
-                            {{form.errors.path}}                        
+                            {{ form.original_file_name }}
+                            {{form.errors.original_file_name}}
                         <div style="margin-top: 20px;">
                             <button type="submit" class="btn" style="background-color: orange; color: black; font-size: 18px; border-radius: 25px; padding: 10px;">Завантажити</button>
                             <label for="action" class="form-label" style="font-size: 18px;"></label>
@@ -38,6 +38,3 @@
         </div>
     </div>
 {% endblock %}
-
-
-
