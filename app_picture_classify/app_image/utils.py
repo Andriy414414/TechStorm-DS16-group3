@@ -5,12 +5,15 @@ import uuid
 
 from django.http import HttpResponseServerError
 from django.core.files.uploadedfile import SimpleUploadedFile, InMemoryUploadedFile
+from django.core.exceptions import ValidationError
 
 from .forms import ImageForm
 
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
+
+import numpy as np
 
 
 def cutting_image(uploaded_image: InMemoryUploadedFile):
@@ -72,12 +75,15 @@ def save_picture_to_claud(img_32x32: PIL.Image.Image):
         return HttpResponseServerError(f"URL зображення не отримано, помилка: {str(e)}")
 
 
-def save_image_url_to_db(form: ImageForm, cloudinary_url: str):
-    """Збереження URL зображення з Cloudinary у базу даних"""
+def preprocess_image(img):
+    """
+    Підготовка зображення до роботи (повертається зображення розширенням 32х32)
+    """
+    img = Image.open(img)
+    image_resized = img.resize((32, 32))
+    image_array = np.array(image_resized)
+    image_array = image_array[:, :, ::-1]
+    image_array = image_array.astype('float32') / 255.0
+    image_array = np.expand_dims(image_array, axis=0)
 
-    try:
-        image_instance = form.save(commit=False)
-        image_instance.cloudinary_image = cloudinary_url
-        image_instance.save()
-    except Exception as e:
-        return HttpResponseServerError(f"Помилка при збереженні в БД: {str(e)}")
+    return image_array

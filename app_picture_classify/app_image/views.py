@@ -1,9 +1,12 @@
-from .utils import cutting_image, save_picture_to_claud, save_image_url_to_db
+import os
+
+from .utils import cutting_image, save_picture_to_claud
+from django.http import HttpResponseServerError
 from django.apps import apps
 from django.shortcuts import render, redirect
 from .forms import ImageForm
 from .models import ImageModel
-from .image_handler import preprocess_image
+from .utils import preprocess_image
 
 
 class ModelInference:
@@ -25,8 +28,8 @@ def home(request):
     if request.method == 'POST':
         form = ImageForm(request.POST, request.FILES, instance=ImageModel())
         if form.is_valid():
-            image_instance = form.save(commit=False)  # Отримуємо екземпляр моделі без збереження в базу даних
-            uploaded_image = request.FILES['original_file_name']  # отримаємо завантажену картинку
+            # image_instance = form.save(commit=False)  # Отримуємо екземпляр моделі без збереження в базу даних
+            uploaded_image = request.FILES['original_file_name']  # отримаємо завантажену картинку (тимчасовий файл)
 
             # перетворення картинки в масив
             img_32x32_array = preprocess_image(uploaded_image)
@@ -46,11 +49,19 @@ def home(request):
             # збереження зображення в хмару, отримання його url
             cloudinary_url = save_picture_to_claud(img_32x32)
 
-            # зберігаємо URL в базі даних
-            save_image_url_to_db(form, cloudinary_url)
+            # Збереження URL зображення з Cloudinary у базу даних
+            try:
+                image_instance = form.save(commit=False)
+                image_instance.cloudinary_image = cloudinary_url
+                image_instance.save()
+            except Exception as e:
+                return HttpResponseServerError(f"Помилка при збереженні в БД: {str(e)}")
+
+            # видаляємо тимчасовий файл
+            os.remove(uploaded_image.name)
 
     return render(request,
-                  template_name='app_image/index.html', 
+                  template_name='app_image/index.html',
                   context={"form": form, "output_text": predicted_class})
 
 
