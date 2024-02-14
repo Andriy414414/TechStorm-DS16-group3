@@ -10,11 +10,11 @@ from .forms import ImageForm
 from .models import ImageModel
 from .utils import preprocess_image
 
-
-from PIL import Image
-
-
+from wand.image import Image as WandImage
+from wand.color import Color
+from PIL import Image as PillowImage
 import io
+import numpy as np
 
 
 
@@ -39,33 +39,24 @@ def home(request):
         if form.is_valid():
             uploaded_image = request.FILES['original_file_name']  # отримаємо завантажену картинку (тимчасовий файл)
 
-            # ---------------------------------------
+            # ---------------------------------------SVG-зображення
             file_extension = os.path.splitext(uploaded_image.name)[1]
             print(f'РАСШИРЕНИЕ ФАЙЛА--------{file_extension}')
             if file_extension == '.svg':
 
-                from wand.image import Image
-                from wand.color import Color
-
                 # Створюємо тимчасовий файл для збереження PNG-зображення
-                with Image(blob=uploaded_image.read(), format='svg', width=32, height=32,
+                with WandImage(blob=uploaded_image.read(), format='svg', width=32, height=32,
                            background=Color('#00000000')) as img:
                     # Конвертуємо SVG у PNG
                     with img.convert('png') as converted_img:
                         # Замінюємо вміст uploaded_image на вміст конвертованого PNG-файлу
                         uploaded_image1 = converted_img.make_blob()
                 # print(uploaded_image1)
-                print('++++++Щось збереглося!!!!=======================++++++++++++++++++++++++++++')
-
-                from PIL import Image as PillowImage
-                import io
-                import numpy as np
 
                 # Создаем объект изображения Pillow из байтовой строки
                 image = PillowImage.open(io.BytesIO(uploaded_image1))
 
-
-                # отримаэмо масив із кольорового зображення з необхідною розмірністю (32, 32, 3)
+                # отримаємо масив із кольорового зображення з необхідною розмірністю (32, 32, 3)
                 img_32x32 = image.resize((32, 32))
                 image_array = np.array(img_32x32)
                 print(f'Розмірність початкового масиву: {image_array.shape}')  # (32, 32, 4)
@@ -115,34 +106,34 @@ def home(request):
                 os.remove(uploaded_image.name)
 
 
+            else:
+                # ---------------------------------------Растрові зображення (чорно-білі і кольорові
 
-            # ---------------------------------------
+                # отримаємо зображення розміром 32х32 пікселі з оригінального зображення та відповідного масиву
+                img_32x32, img_32x32_array = preprocess_image(uploaded_image)
 
-            # # отримаємо зображення розміром 32х32 пікселі з оригінального зображення та відповідного масиву
-            # img_32x32, img_32x32_array = preprocess_image(uploaded_image)
-            # #
-            # # отримання конфігурації додатка 'app_image'
-            # AppConfig = apps.get_app_config('app_image')
-            # # з отриманої конфігурації отримується модель
-            # model = AppConfig.model
-            #
-            # # передбачення класу зображення за допомогою переданої моделі
-            # model_inference = ModelInference(model)
-            # predicted_class = model_inference.predict_class(img_32x32_array)
-            #
-            # # збереження зображення в хмару, отримання його url
-            # cloudinary_url = save_picture_to_claud(img_32x32)
-            #
-            # # Збереження URL зображення з Cloudinary у базу даних
-            # try:
-            #     image_instance = form.save(commit=False)
-            #     image_instance.cloudinary_image = cloudinary_url
-            #     image_instance.save()  # при цьому іде запис в БД і запис оригінального файлу на диск
-            # except Exception as e:
-            #     return HttpResponseServerError(f"Помилка при збереженні в БД: {str(e)}")
-            #
-            # # видаляємо тимчасовий файл з диска
-            # os.remove(uploaded_image.name)
+                # отримання конфігурації додатка 'app_image'
+                AppConfig = apps.get_app_config('app_image')
+                # з отриманої конфігурації отримується модель
+                model = AppConfig.model
+
+                # передбачення класу зображення за допомогою переданої моделі
+                model_inference = ModelInference(model)
+                predicted_class = model_inference.predict_class(img_32x32_array)
+
+                # збереження зображення в хмару, отримання його url
+                cloudinary_url = save_picture_to_claud(img_32x32)
+
+                # Збереження URL зображення з Cloudinary у базу даних
+                try:
+                    image_instance = form.save(commit=False)
+                    image_instance.cloudinary_image = cloudinary_url
+                    image_instance.save()  # при цьому іде запис в БД і запис оригінального файлу на диск
+                except Exception as e:
+                    return HttpResponseServerError(f"Помилка при збереженні в БД: {str(e)}")
+
+                # видаляємо тимчасовий файл з диска
+                os.remove(uploaded_image.name)
 
     return render(request,
                   template_name='app_image/index.html',
