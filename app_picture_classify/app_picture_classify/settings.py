@@ -20,7 +20,7 @@ load_dotenv()
 
 DB_HOST = os.environ.get('DB_HOST')
 DB_PASSWORD = os.environ.get('DB_PASSWORD')
-DB_USER = os.environ.get('USER')
+DB_USER = os.environ.get('DB_USER')
 DB_PORT = os.environ.get('DB_PORT')
 
 CLOUDINARY_NAME = os.environ.get('CLOUDINARY_NAME')
