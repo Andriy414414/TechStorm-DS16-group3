@@ -46,14 +46,22 @@ def save_picture_to_claud(img_32x32: PIL.Image.Image):
         return HttpResponseServerError(f"URL зображення не отримано, помилка: {str(e)}")
 
 
+
+
+import imghdr
 def preprocess_image(img):
     """
     Підготовка зображення до роботи (повертається зображення розширенням 32х32)
     """
+
     img = Image.open(img)
+
     image_resized = img.resize((32, 32))
     image_array = np.array(image_resized)
+    print(f'Размерность начального массива: {image_array.shape}')
     image_array = image_array / 255.0
+    print(f'Размерность массива после нормализации: {image_array.shape}')
     image_array = np.expand_dims(image_array, axis=0)
+    print(f'Размерность массива после preprocess_image: {image_array.shape}')
 
     return image_resized, image_array
