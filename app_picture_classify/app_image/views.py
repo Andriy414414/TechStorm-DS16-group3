@@ -74,10 +74,14 @@ def home(request):
                     # plt.imshow(image_array)
                     # plt.show()  # зображення виводиться коректно
 
+                    # Создаем объект изображения Pillow из массива image_array
+                    img_32x32 = PillowImage.fromarray(image_array.astype('uint8'), 'RGB')
+
                     print(f'Розмірність масиву додавання додаткового виміру: {image_array.shape}')
                 else:
                     print(f'Розмірність масиву дорівнює {image_array.shape}, підходяча розмірність - (32, 32, 2) або (32, 32, 4)')
 
+                # Класифікація---------------------------
                 image_array = image_array / 255.0
                 img_32x32_array = np.expand_dims(image_array, axis=0)  # перетворення (32, 32, 3) в (1, 32, 32, 3)
                 print(f'Розмірність кінцевого масиву: {img_32x32_array.shape}')
@@ -90,12 +94,18 @@ def home(request):
                 # передбачення класу зображення за допомогою переданої моделі
                 model_inference = ModelInference(model)
                 predicted_class = model_inference.predict_class(img_32x32_array)
+                # Класифікація---------------------------
+
 
                 # конвертуємо зображення в формат RGB для збереження без альфа-каналу (JPEG його не підтримує)
                 img_32x32_rgb = img_32x32.convert('RGB')
 
-                # Отображаем изображение-----------------------
-                img_32x32_rgb.save('temp_filename.jpeg', format='JPEG')
+                # # виведемо зображення на екран-----------------------воно ЧОРНЕ для чорно-білого зображення!
+                # plt.imshow(img_32x32_rgb)
+                # plt.show()
+
+                # # Зберігаємо зображення-----------------------
+                # img_32x32_rgb.save('temp_filename.jpeg', format='JPEG')
 
                 # задаємо ім'я тимчасового файлу
                 temp_filename = 'temp_image.jpg'
