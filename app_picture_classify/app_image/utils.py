@@ -132,3 +132,29 @@ def save_jpeg_and_url_from_svg(form, img_32x32):
     except Exception as e:
         return HttpResponseServerError(f"Помилка при збереженні в БД: {str(e)}")
 
+
+def jpg_classification(img_32x32_array, class_name_modelinference):
+    """Класифікація зображення з файлу формату .jpg та .jpeg"""
+
+    # отримання конфігурації додатка 'app_image'
+    AppConfig = apps.get_app_config('app_image')
+    # з отриманої конфігурації отримується модель
+    model = AppConfig.model
+    # передбачення класу зображення за допомогою переданої моделі
+    model_inference = class_name_modelinference(model)
+    predicted_class = model_inference.predict_class(img_32x32_array)
+
+    return predicted_class
+
+
+def save_jpeg_and_url_from_jpg_and_jpeg(form, img_32x32):
+
+    cloudinary_url = save_picture_to_claud(img_32x32)
+    # Збереження URL зображення з Cloudinary у базу даних
+    try:
+        image_instance = form.save(commit=False)
+        image_instance.cloudinary_image = cloudinary_url
+        image_instance.save()  # при цьому іде запис в БД і запис оригінального файлу на диск
+    except Exception as e:
+        return HttpResponseServerError(f"Помилка при збереженні в БД: {str(e)}")
+
