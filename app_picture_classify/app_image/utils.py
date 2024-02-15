@@ -4,42 +4,13 @@ import os
 import uuid
 
 from django.http import HttpResponseServerError
-from django.core.files.uploadedfile import SimpleUploadedFile, InMemoryUploadedFile
-from django.core.exceptions import ValidationError
-
-from .forms import ImageForm
+from django.core.files.uploadedfile import SimpleUploadedFile
 
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 
 import numpy as np
-
-
-def cutting_image(uploaded_image: InMemoryUploadedFile):
-    """
-    Ця функція призначена для попередньої обробки зображень.
-    Вона вирізає центральну частину зображення та змінює його розмір на 32x32 пікселі.
-    """
-
-    img = Image.open(uploaded_image)
-    width, height = img.size
-    if width > height:
-        new_width = height
-        left = (width - new_width) // 2
-        right = (width + new_width) // 2
-        top = 0
-        bottom = height
-    else:
-        new_height = width
-        top = (height - new_height) // 2
-        bottom = (height + new_height) // 2
-        left = 0
-        right = width
-    img = img.crop((left, top, right, bottom))
-    img = img.resize((32, 32))
-
-    return img
 
 
 def save_picture_to_claud(img_32x32: PIL.Image.Image):
@@ -85,4 +56,4 @@ def preprocess_image(img):
     image_array = image_array / 255.0
     image_array = np.expand_dims(image_array, axis=0)
 
-    return image_array
+    return image_resized, image_array
