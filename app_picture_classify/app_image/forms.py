@@ -1,9 +1,9 @@
-from django.forms import ModelForm, ImageField, FileInput
+from django.forms import ModelForm, ImageField, FileInput, FileField
 from .models import ImageModel
 
 
 class ImageForm(ModelForm):
-    original_file_name = ImageField(widget=FileInput(attrs={
+    original_file_name = FileField(widget=FileInput(attrs={
         "class": "form-control-lg form-control mx-auto",
         "name": "image",
         "id": "image",

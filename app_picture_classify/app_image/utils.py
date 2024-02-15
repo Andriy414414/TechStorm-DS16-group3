@@ -11,6 +11,9 @@ import cloudinary.uploader
 import cloudinary.api
 
 import numpy as np
+from PIL import Image as PillowImage
+from django.apps import apps
+
 
 
 def save_picture_to_claud(img_32x32: PIL.Image.Image):
@@ -46,10 +49,14 @@ def save_picture_to_claud(img_32x32: PIL.Image.Image):
         return HttpResponseServerError(f"URL зображення не отримано, помилка: {str(e)}")
 
 
+
+
+import imghdr
 def preprocess_image(img):
     """
     Підготовка зображення до роботи (повертається зображення розширенням 32х32)
     """
+
     img = Image.open(img)
     image_resized = img.resize((32, 32))
     image_array = np.array(image_resized)
@@ -57,3 +64,97 @@ def preprocess_image(img):
     image_array = np.expand_dims(image_array, axis=0)
 
     return image_resized, image_array
+
+
+def svg_reshape_to_32x32x3(image: PillowImage):
+    """Отримання масиву із зображення з необхідною розмірністю (32, 32, 3)"""
+
+    img_32x32 = image.resize((32, 32))
+    image_array = np.array(img_32x32)
+
+    if image_array.shape == (32, 32, 4):  # кольорове зображення
+        image_array = image_array[:, :, :3]  # змінюємо розмірність на (32, 32, 3)
+    elif image_array.shape == (32, 32, 2):  # чорно-біле зображення
+        # копіюємо другий канал і додаємо його до image_array
+        third_channel = image_array[:, :, 1]  # копіюємо 2-й канал
+        image_array_with_third_channel = np.dstack((image_array, third_channel))  # додаємо його до image_array
+        image_array = image_array_with_third_channel
+        # створюємо об'єкт зображення Pillow із масиву image_array
+        img_32x32 = PillowImage.fromarray(image_array.astype('uint8'), 'RGB')
+    else:
+        print(f'Розмірність масиву дорівнює {image_array.shape}, підходяча розмірність - (32, 32, 2) або (32, 32, 4)')
+
+    return image_array, img_32x32
+
+
+def svg_classification(image_array, class_name_modelinference):
+    """Класифікація зображення з файлу формату .svg"""
+
+    image_array = image_array / 255.0  # нормалізація даних
+    img_32x32_array = np.expand_dims(image_array, axis=0)  # перетворення (32, 32, 3) в (1, 32, 32, 3)
+    # отримання конфігурації додатка 'app_image'
+    AppConfig = apps.get_app_config('app_image')
+    # з отриманої конфігурації отримується модель
+    model = AppConfig.model
+    # передбачення класу зображення за допомогою переданої моделі
+    model_inference = class_name_modelinference(model)
+    predicted_class = model_inference.predict_class(img_32x32_array)
+
+    return predicted_class
+
+
+def save_jpeg_and_url_from_svg(form, img_32x32):
+    """Збереження картинки в Coudinary та її URL в базі даних"""
+
+    # конвертуємо зображення в формат RGB для збереження без альфа-каналу (JPEG його не підтримує)
+    img_32x32_rgb = img_32x32.convert('RGB')
+
+    # задаємо ім'я тимчасового файлу
+    temp_filename = 'temp_image.jpg'
+
+    # зберігаємо перетворене зображення у файл формату JPEG
+    img_32x32_rgb.save(temp_filename, format='JPEG')
+
+    # завантажуємо зображення з файлу
+    saved_image = PillowImage.open(temp_filename)
+
+    # завантажуємо зображення в хмару та отримуємо його URL
+    cloudinary_url = save_picture_to_claud(saved_image)
+
+    # видаляємо тимчасовий файл
+    os.remove(temp_filename)
+
+    # Збереження URL зображення з Cloudinary у базу даних
+    try:
+        image_instance = form.save(commit=False)
+        image_instance.cloudinary_image = cloudinary_url
+        image_instance.save()  # при цьому іде запис в БД і запис оригінального файлу на диск
+    except Exception as e:
+        return HttpResponseServerError(f"Помилка при збереженні в БД: {str(e)}")
+
+
+def jpg_classification(img_32x32_array, class_name_modelinference):
+    """Класифікація зображення з файлу формату .jpg та .jpeg"""
+
+    # отримання конфігурації додатка 'app_image'
+    AppConfig = apps.get_app_config('app_image')
+    # з отриманої конфігурації отримується модель
+    model = AppConfig.model
+    # передбачення класу зображення за допомогою переданої моделі
+    model_inference = class_name_modelinference(model)
+    predicted_class = model_inference.predict_class(img_32x32_array)
+
+    return predicted_class
+
+
+def save_jpeg_and_url_from_jpg_and_jpeg(form, img_32x32):
+
+    cloudinary_url = save_picture_to_claud(img_32x32)
+    # Збереження URL зображення з Cloudinary у базу даних
+    try:
+        image_instance = form.save(commit=False)
+        image_instance.cloudinary_image = cloudinary_url
+        image_instance.save()  # при цьому іде запис в БД і запис оригінального файлу на диск
+    except Exception as e:
+        return HttpResponseServerError(f"Помилка при збереженні в БД: {str(e)}")
+

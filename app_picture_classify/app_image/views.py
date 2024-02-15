@@ -1,12 +1,22 @@
 import os
 
-from .utils import save_picture_to_claud
+from django.core.files.uploadedfile import InMemoryUploadedFile
+
+from .utils import save_picture_to_claud, svg_reshape_to_32x32x3, svg_classification, save_jpeg_and_url_from_svg, \
+    jpg_classification, save_jpeg_and_url_from_jpg_and_jpeg
 from django.http import HttpResponseServerError
 from django.apps import apps
 from django.shortcuts import render, redirect
 from .forms import ImageForm
 from .models import ImageModel
 from .utils import preprocess_image
+
+from wand.image import Image as WandImage
+from wand.color import Color
+from PIL import Image as PillowImage
+import io
+import numpy as np
+import matplotlib.pyplot as plt
 
 
 class ModelInference:
@@ -28,38 +38,47 @@ def home(request):
     if request.method == 'POST':
         form = ImageForm(request.POST, request.FILES, instance=ImageModel())
         if form.is_valid():
-            # image_instance = form.save(commit=False)  # Отримуємо екземпляр моделі без збереження в базу даних
-            uploaded_image = request.FILES['original_file_name']  # отримаємо завантажену картинку (тимчасовий файл)
+            uploaded_image = request.FILES['original_file_name']  # отримуємо завантажену картинку (тимчасовий файл)
+            file_extension = os.path.splitext(uploaded_image.name)[1]  # отримуємо розширення тимчасового файла
 
-            # отримаємо зображення розміром 32х32 пікселі з оригінального зображення та відповідного масиву
-            img_32x32, img_32x32_array = preprocess_image(uploaded_image)
+            if file_extension == '.svg':
+                # ---------------------------------------Векторні зображення (чорно-білі та кольорові)
 
-            # отримання конфігурації додатка 'app_image'
-            AppConfig = apps.get_app_config('app_image')
-            # з отриманої конфігурації отримується модель
-            model = AppConfig.model
+                # Створюємо тимчасовий файл для збереження PNG-зображення
+                with WandImage(blob=uploaded_image.read(), format='svg', width=32, height=32,
+                           background=Color('#00000000')) as img:
+                    # Конвертуємо SVG у PNG
+                    with img.convert('png') as converted_img:
+                        # Замінюємо вміст uploaded_image на вміст конвертованого PNG-файлу
+                        uploaded_image1 = converted_img.make_blob()
 
-            # передбачення класу зображення за допомогою переданої моделі
-            model_inference = ModelInference(model)
-            predicted_class = model_inference.predict_class(img_32x32_array)
+                # створюємо об'єкт зображення Pillow з байтового рядка
+                image = PillowImage.open(io.BytesIO(uploaded_image1))
 
-            # збереження зображення в хмару, отримання його url
-            cloudinary_url = save_picture_to_claud(img_32x32)
+                # отримуємо масив із зображення з необхідною розмірністю (32, 32, 3)
+                image_array, img_32x32 = svg_reshape_to_32x32x3(image)
 
-            # Збереження URL зображення з Cloudinary у базу даних
-            try:
-                image_instance = form.save(commit=False)
-                image_instance.cloudinary_image = cloudinary_url
-                image_instance.save()
-            except Exception as e:
-                return HttpResponseServerError(f"Помилка при збереженні в БД: {str(e)}")
+                # Класифікація
+                predicted_class = svg_classification(image_array, ModelInference)
 
-            # видаляємо тимчасовий файл
-            os.remove(uploaded_image.name)
+                # збереження зображення в хмару, його url в базу даних
+                save_jpeg_and_url_from_svg(form, img_32x32)
+
+            else:
+                # ---------------------------------------Растрові зображення (чорно-білі та кольорові)
+                # отримуємо зображення розміром 32х32 пікселі з оригінального зображення та відповідного масиву
+                img_32x32, img_32x32_array = preprocess_image(uploaded_image)
+
+                # Класифікація
+                predicted_class = jpg_classification(img_32x32_array, ModelInference)
+
+                # збереження зображення в хмару, його url в базу даних
+                save_jpeg_and_url_from_jpg_and_jpeg(form, img_32x32)
 
     return render(request,
                   template_name='app_image/index.html',
                   context={"form": form, "output_text": predicted_class})
+
 
 
 def action(request):
