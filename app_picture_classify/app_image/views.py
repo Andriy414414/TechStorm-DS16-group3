@@ -15,7 +15,7 @@ from wand.color import Color
 from PIL import Image as PillowImage
 import io
 import numpy as np
-
+import matplotlib.pyplot as plt
 
 
 class ModelInference:
@@ -51,20 +51,35 @@ def home(request):
                     with img.convert('png') as converted_img:
                         # Замінюємо вміст uploaded_image на вміст конвертованого PNG-файлу
                         uploaded_image1 = converted_img.make_blob()
-                # print(uploaded_image1)
 
                 # Создаем объект изображения Pillow из байтовой строки
                 image = PillowImage.open(io.BytesIO(uploaded_image1))
 
-                # отримаємо масив із кольорового зображення з необхідною розмірністю (32, 32, 3)
+                # отримаємо масив із зображення з необхідною розмірністю (32, 32, 3)
                 img_32x32 = image.resize((32, 32))
                 image_array = np.array(img_32x32)
-                print(f'Розмірність початкового масиву: {image_array.shape}')  # (32, 32, 4)
-                image_array = image_array[:, :, :3]  # змінюємо розмірність на (32, 32, 3)
-                print(f'Розмірність масиву після злиття каналів: {image_array.shape}')
+                print(f'Розмірність початкового масиву растра з SVG файлу: {image_array.shape}')  # (32, 32, 4) - кольорове, (32, 32, 2) - чорно-біле
+
+                if image_array.shape == (32, 32, 4):  # кольорове
+                    image_array = image_array[:, :, :3]  # змінюємо розмірність на (32, 32, 3)
+                    print(f'Розмірність масиву після злиття каналів: {image_array.shape}')
+                elif image_array.shape == (32, 32, 2):  # чорно-біле
+                    # print(image_array)
+                    # копіюємо другий канал і додаємо його до image_array
+                    third_channel = image_array[:, :, 1]  # копіюємо 2й канал
+                    image_array_with_third_channel = np.dstack((image_array, third_channel))  # додаємо його до image_array
+                    image_array = image_array_with_third_channel
+                    # print(image_array)
+                    # # відображаємо зображення
+                    # plt.imshow(image_array)
+                    # plt.show()  # зображення виводиться коректно
+
+                    print(f'Розмірність масиву додавання додаткового виміру: {image_array.shape}')
+                else:
+                    print(f'Розмірність масиву дорівнює {image_array.shape}, підходяча розмірність - (32, 32, 2) або (32, 32, 4)')
+
                 image_array = image_array / 255.0
-                print(f'Розмірність масиву після нормалізації даних: {image_array.shape}')
-                img_32x32_array = np.expand_dims(image_array, axis=0)  # після обробки кольорового SVG маємо 4 канали, а модель приймає 3
+                img_32x32_array = np.expand_dims(image_array, axis=0)  # перетворення (32, 32, 3) в (1, 32, 32, 3)
                 print(f'Розмірність кінцевого масиву: {img_32x32_array.shape}')
 
                 # отримання конфігурації додатка 'app_image'
@@ -79,11 +94,17 @@ def home(request):
                 # конвертуємо зображення в формат RGB для збереження без альфа-каналу (JPEG його не підтримує)
                 img_32x32_rgb = img_32x32.convert('RGB')
 
+                # Отображаем изображение-----------------------
+                img_32x32_rgb.save('temp_filename.jpeg', format='JPEG')
+
                 # задаємо ім'я тимчасового файлу
                 temp_filename = 'temp_image.jpg'
 
                 # зберігаємо перетворене зображення у файл формату JPEG
                 img_32x32_rgb.save(temp_filename, format='JPEG')
+
+                # Отображаем изображение-----------------------
+
 
                 # завантажуємо зображення з файлу
                 saved_image = PillowImage.open(temp_filename)
@@ -107,7 +128,7 @@ def home(request):
 
 
             else:
-                # ---------------------------------------Растрові зображення (чорно-білі і кольорові
+                # ---------------------------------------Растрові зображення (чорно-білі та кольорові)
 
                 # отримаємо зображення розміром 32х32 пікселі з оригінального зображення та відповідного масиву
                 img_32x32, img_32x32_array = preprocess_image(uploaded_image)
