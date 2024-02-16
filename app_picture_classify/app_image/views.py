@@ -9,7 +9,7 @@ from django.apps import apps
 from django.shortcuts import render, redirect
 from .forms import ImageForm
 from .models import ImageModel
-from .utils import preprocess_image
+from .utils import preprocess_image, remove_img_from_cloud, PUBLIC_ID
 
 from wand.image import Image as WandImage
 from wand.color import Color
@@ -17,6 +17,23 @@ from PIL import Image as PillowImage
 import io
 import numpy as np
 import matplotlib.pyplot as plt
+
+
+img_public_id = None
+
+def destroy_original_image_from_cloud(func):
+    """
+Функція destroy_original_image_from_cloud — це декоратор, 
+який видалить оригінальне зображення з cloudinary після виконнання основної функції
+    """
+    def inner(*args, **kwargs):
+        if PUBLIC_ID.get("public_id"):
+            remove_img_from_cloud(PUBLIC_ID.get("public_id"))
+        result = func(*args)
+        
+        return result
+    
+    return inner
 
 
 class ModelInference:
@@ -31,14 +48,21 @@ class ModelInference:
         return сlass_names[predicted_class]
 
 
+
+
+@destroy_original_image_from_cloud
 def home(request):
     form = ImageForm(instance=ImageModel())
     predicted_class = ''
+    img_url = None
 
     if request.method == 'POST':
         form = ImageForm(request.POST, request.FILES, instance=ImageModel())
         if form.is_valid():
+            # global img_public_id
             uploaded_image = request.FILES['original_file_name']  # отримуємо завантажену картинку (тимчасовий файл)
+            img_url, img_public_id = save_picture_to_claud(PillowImage.open(uploaded_image))
+            PUBLIC_ID['public_id'] = img_public_id
             file_extension = os.path.splitext(uploaded_image.name)[1]  # отримуємо розширення тимчасового файла
 
             if file_extension == '.svg':
@@ -77,12 +101,5 @@ def home(request):
 
     return render(request,
                   template_name='app_image/index.html',
-                  context={"form": form, "output_text": predicted_class})
+                  context={"form": form, "output_text": predicted_class, "uploaded_image_url": img_url})
 
-
-
-def action(request):
-    r = request
-    if r:
-        print("action")
-    return redirect('app_image:home')

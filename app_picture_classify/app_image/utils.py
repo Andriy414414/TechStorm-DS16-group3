@@ -44,7 +44,8 @@ def save_picture_to_claud(img_32x32: PIL.Image.Image):
 
     try:
         cloudinary_url = uploaded_result['url']  # отримаємо URL картинки на Cloudinary
-        return cloudinary_url
+        cloudinary_public_id = uploaded_result['public_id']  # отримаємо Public ID картинки на Cloudinary
+        return cloudinary_url, cloudinary_public_id
     except Exception as e:
         return HttpResponseServerError(f"URL зображення не отримано, помилка: {str(e)}")
 
@@ -119,7 +120,7 @@ def save_jpeg_and_url_from_svg(form, img_32x32):
     saved_image = PillowImage.open(temp_filename)
 
     # завантажуємо зображення в хмару та отримуємо його URL
-    cloudinary_url = save_picture_to_claud(saved_image)
+    cloudinary_url = save_picture_to_claud(saved_image)[0]
 
     # видаляємо тимчасовий файл
     os.remove(temp_filename)
@@ -149,7 +150,7 @@ def jpg_classification(img_32x32_array, class_name_modelinference):
 
 def save_jpeg_and_url_from_jpg_and_jpeg(form, img_32x32):
 
-    cloudinary_url = save_picture_to_claud(img_32x32)
+    cloudinary_url = save_picture_to_claud(img_32x32)[0]
     # Збереження URL зображення з Cloudinary у базу даних
     try:
         image_instance = form.save(commit=False)
@@ -158,3 +159,18 @@ def save_jpeg_and_url_from_jpg_and_jpeg(form, img_32x32):
     except Exception as e:
         return HttpResponseServerError(f"Помилка при збереженні в БД: {str(e)}")
 
+
+def remove_img_from_cloud(public_id: str) -> None:
+    '''
+    Видаляє фотографію з cloudinary по її public_id
+    Повертає None
+    '''
+    cloudinary.uploader.destroy(public_id)
+    print("the image saccessfully deleted")
+
+
+PUBLIC_ID = {"public_id": None} # зберігає public id попередньго фото
+
+    
+
+    

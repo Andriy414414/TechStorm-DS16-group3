@@ -7,7 +7,6 @@ app_name = 'app_image'
 
 urlpatterns = [
     path('', views.home, name='home'), # app_image:home
-    path('action/', views.action, name='action')
 ]
 
 
