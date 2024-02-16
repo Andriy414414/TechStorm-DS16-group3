@@ -9,7 +9,7 @@ from django.apps import apps
 from django.shortcuts import render, redirect
 from .forms import ImageForm
 from .models import ImageModel
-from .utils import preprocess_image, remove_img_from_cloud
+from .utils import preprocess_image, remove_img_from_cloud, PUBLIC_ID
 
 from wand.image import Image as WandImage
 from wand.color import Color
@@ -19,18 +19,21 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-# def destroy_original_image_from_cloud(func):
-#     """
-# Функція destroy_original_image_from_cloud — це декоратор, 
-# який видалить оригінальне зображення з cloudinary після виконнання основної функції
-#     """
-#     def inner(*args, **kwargs):
-#         result = func(*args)
+img_public_id = None
+
+def destroy_original_image_from_cloud(func):
+    """
+Функція destroy_original_image_from_cloud — це декоратор, 
+який видалить оригінальне зображення з cloudinary після виконнання основної функції
+    """
+    def inner(*args, **kwargs):
+        if PUBLIC_ID.get("public_id"):
+            remove_img_from_cloud(PUBLIC_ID.get("public_id"))
+        result = func(*args)
         
-#         return result
-#     if img_public_id:
-#             remove_img_from_cloud(img_public_id)
-#     return inner
+        return result
+    
+    return inner
 
 
 class ModelInference:
@@ -45,9 +48,9 @@ class ModelInference:
         return сlass_names[predicted_class]
 
 
-img_public_id = None
 
-# @destroy_original_image_from_cloud
+
+@destroy_original_image_from_cloud
 def home(request):
     form = ImageForm(instance=ImageModel())
     predicted_class = ''
@@ -56,9 +59,10 @@ def home(request):
     if request.method == 'POST':
         form = ImageForm(request.POST, request.FILES, instance=ImageModel())
         if form.is_valid():
-            global img_public_id
+            # global img_public_id
             uploaded_image = request.FILES['original_file_name']  # отримуємо завантажену картинку (тимчасовий файл)
             img_url, img_public_id = save_picture_to_claud(PillowImage.open(uploaded_image))
+            PUBLIC_ID['public_id'] = img_public_id
             file_extension = os.path.splitext(uploaded_image.name)[1]  # отримуємо розширення тимчасового файла
 
             if file_extension == '.svg':
@@ -99,10 +103,3 @@ def home(request):
                   template_name='app_image/index.html',
                   context={"form": form, "output_text": predicted_class, "uploaded_image_url": img_url})
 
-
-def run_home_page(request):
-
-    img_public_id = None
-    if img_public_id:
-        remove_img_from_cloud(img_public_id)
-    return home(request)

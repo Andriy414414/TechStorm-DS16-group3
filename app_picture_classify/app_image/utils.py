@@ -165,11 +165,11 @@ def remove_img_from_cloud(public_id: str) -> None:
     Видаляє фотографію з cloudinary по її public_id
     Повертає None
     '''
-    print("hello")
-    if not public_id:
-        print("no punlic id")
     cloudinary.uploader.destroy(public_id)
     print("the image saccessfully deleted")
+
+
+PUBLIC_ID = {"public_id": None} # зберігає public id попередньго фото
 
     
 
