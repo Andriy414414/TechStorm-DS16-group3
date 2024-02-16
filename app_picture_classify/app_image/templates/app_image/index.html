@@ -10,20 +10,16 @@
             <div class="row justify-content-center">
                 <div class="col-md-6">
                     <form action="{% url 'app_image:home' %}" method="post" enctype="multipart/form-data" class="mb-3">
-                        {% csrf_token %}
-                            {{ form.original_file_name }}
-                            {{form.errors.original_file_name}}
+                        <div style="margin-top: 20px;">
+                            {% csrf_token %}
+                                {{ form.original_file_name }}
+                                {{form.errors.original_file_name}}
+                        </div>
                         <div style="margin-top: 20px;">
                             <button type="submit" class="btn" style="background-color: orange; color: black; font-size: 18px; border-radius: 25px; padding: 10px;">Завантажити</button>
                             <label for="action" class="form-label" style="font-size: 18px;"></label>
                         </div>
-                        </form>
-                            <form action="{% url 'app_image:action' %}" method="POST">
-                                {% csrf_token %}
-                            <div style="margin-top: 20px;">
-                            <button type="submit" class="btn" style="background-color: orange; color: black; font-size: 18px; border-radius: 25px; padding: 10px;">Класифікувати зображення</button>
-                        </div>
-                    </form>
+
                 </div>
             </div>
             <div class="row justify-content-center">
@@ -35,6 +31,21 @@
                     </div>
                 </div>
             </div>
+            <div class="row justify-content-center">
+            {% if uploaded_image_url %}
+            <div class="card" style="width: 18rem;">
+                <img src="{{ uploaded_image_url }}" class="card-img-top" alt="Uploaded Image">
+                <div class="card-body">
+                  <!-- <h5 class="card-title"></h5> -->
+                </div>
+            </div>
+            {% endif %}
+        </div>
         </div>
     </div>
 {% endblock %}
+
+
+
+
+

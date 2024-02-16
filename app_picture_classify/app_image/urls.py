@@ -6,8 +6,7 @@ from . import views
 app_name = 'app_image'
 
 urlpatterns = [
-    path('', views.home, name='home'), # app_image:home
-    path('action/', views.action, name='action')
+    path('', views.run_home_page, name='home'), # app_image:home
 ]
 
 
