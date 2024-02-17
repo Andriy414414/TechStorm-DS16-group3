@@ -107,7 +107,15 @@ def home(request):
                   context={"form": form, "output_text": predicted_class, "uploaded_image_url": img_url})
 
 
+<<<<<<< Updated upstream
 def home_page(request):
 
     return render(request,
                   template_name='app_image/home_page.html')
+=======
+def action(request):
+    r = request
+    if r:
+        print("action")
+    return redirect('app_image:home')
+>>>>>>> Stashed changes

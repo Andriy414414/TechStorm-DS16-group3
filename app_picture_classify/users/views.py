@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
@@ -10,10 +11,21 @@ def signupuser(request):
 
     if request.user.is_authenticated:
         return redirect(to='app_image:home')
+=======
+from django.shortcuts import render, redirect
+
+from .forms import RegisterForm
+
+
+def signupuser(request):
+    if request.user.is_authenticated:
+        return redirect(to='noteapp:main')
+>>>>>>> Stashed changes
 
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
+<<<<<<< Updated upstream
 
             # створення нового користувача і збереження його в БД
             user = form.save(commit=False)
@@ -53,3 +65,11 @@ def logoutuser(request):
 
     logout(request)
     return redirect(to='app_image:home_page')
+=======
+            form.save()
+            return redirect(to='noteapp:main')
+        else:
+            return render(request, 'users/signup.html', context={"form": form})
+
+    return render(request, 'users/signup.html', context={"form": RegisterForm()})
+>>>>>>> Stashed changes
