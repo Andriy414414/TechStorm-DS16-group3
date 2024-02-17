@@ -1,5 +1,6 @@
 from django.forms import ModelForm, ImageField, FileInput, FileField
 from .models import ImageModel
+from django import forms
 
 
 class ImageForm(ModelForm):
@@ -13,4 +14,3 @@ class ImageForm(ModelForm):
     class Meta:
         model = ImageModel
         fields = ['original_file_name']
-

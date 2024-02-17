@@ -18,21 +18,22 @@ import io
 import numpy as np
 import matplotlib.pyplot as plt
 
-
 img_public_id = None
+
 
 def destroy_original_image_from_cloud(func):
     """
 Функція destroy_original_image_from_cloud — це декоратор, 
 який видалить оригінальне зображення з cloudinary після виконнання основної функції
     """
+
     def inner(*args, **kwargs):
         if PUBLIC_ID.get("public_id"):
             remove_img_from_cloud(PUBLIC_ID.get("public_id"))
         result = func(*args)
-        
+
         return result
-    
+
     return inner
 
 
@@ -46,8 +47,6 @@ class ModelInference:
         predicted_class = prediction.argmax()
 
         return сlass_names[predicted_class]
-
-
 
 
 @destroy_original_image_from_cloud
@@ -70,7 +69,7 @@ def home(request):
 
                 # Створюємо тимчасовий файл для збереження PNG-зображення
                 with WandImage(blob=uploaded_image.read(), format='svg', width=32, height=32,
-                           background=Color('#00000000')) as img:
+                               background=Color('#00000000')) as img:
                     # Конвертуємо SVG у PNG
                     with img.convert('png') as converted_img:
                         # Замінюємо вміст uploaded_image на вміст конвертованого PNG-файлу
@@ -86,7 +85,7 @@ def home(request):
                 predicted_class = svg_classification(image_array, ModelInference)
 
                 # збереження зображення в хмару, його url в базу даних
-                save_jpeg_and_url_from_svg(form, img_32x32)
+                save_jpeg_and_url_from_svg(form, img_32x32, request.user)
 
             else:
                 # ---------------------------------------Растрові зображення (чорно-білі та кольорові)
@@ -97,9 +96,17 @@ def home(request):
                 predicted_class = jpg_classification(img_32x32_array, ModelInference)
 
                 # збереження зображення в хмару, його url в базу даних
-                save_jpeg_and_url_from_jpg_and_jpeg(form, img_32x32)
+                # save_jpeg_and_url_from_jpg_and_jpeg(form, img_32x32)
+                save_jpeg_and_url_from_jpg_and_jpeg(form, img_32x32, request.user)
+
+            # видаляємо тимчасовий файл з диска
+            os.remove(uploaded_image.name)
 
     return render(request,
                   template_name='app_image/index.html',
                   context={"form": form, "output_text": predicted_class, "uploaded_image_url": img_url})
 
+
+def home_page(request):
+    return render(request,
+                  template_name='app_image/home_page.html')

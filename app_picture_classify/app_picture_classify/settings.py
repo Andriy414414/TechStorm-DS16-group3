@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 import os
 from pathlib import Path
 from dotenv import load_dotenv
-
+from django.utils.translation import gettext_lazy as _
 import cloudinary.api
 
 
@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'app_image',
     'cloudinary',
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -125,7 +126,15 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+
+LANGUAGE_CODE = 'uk'
+
+LANGUAGES = [
+    ('uk', 'Українська'),
+    ('ru', 'Русский'),
+    ('en', 'English'),
+]
+# LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
 
@@ -148,3 +157,5 @@ cloudinary.config(
     api_key=CLOUDINARY_API_KEY,
     api_secret=CLOUDINARY_API_SECRET
 )
+
+# LOGOUT_REDIRECT_URL = 'app_image/home_page/'
