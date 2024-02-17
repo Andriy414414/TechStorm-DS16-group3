@@ -85,7 +85,7 @@ def home(request):
                 predicted_class = svg_classification(image_array, ModelInference)
 
                 # збереження зображення в хмару, його url в базу даних
-                save_jpeg_and_url_from_svg(form, img_32x32)
+                save_jpeg_and_url_from_svg(form, img_32x32, request.user)
 
             else:
                 # ---------------------------------------Растрові зображення (чорно-білі та кольорові)
@@ -96,7 +96,8 @@ def home(request):
                 predicted_class = jpg_classification(img_32x32_array, ModelInference)
 
                 # збереження зображення в хмару, його url в базу даних
-                save_jpeg_and_url_from_jpg_and_jpeg(form, img_32x32)
+                # save_jpeg_and_url_from_jpg_and_jpeg(form, img_32x32)
+                save_jpeg_and_url_from_jpg_and_jpeg(form, img_32x32, request.user)
 
             # видаляємо тимчасовий файл з диска
             os.remove(uploaded_image.name)

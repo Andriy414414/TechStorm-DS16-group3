@@ -104,7 +104,7 @@ def svg_classification(image_array, class_name_modelinference):
     return predicted_class
 
 
-def save_jpeg_and_url_from_svg(form, img_32x32):
+def save_jpeg_and_url_from_svg(form, img_32x32, request_user):
     """Збереження картинки в Coudinary та її URL в базі даних"""
 
     # конвертуємо зображення в формат RGB для збереження без альфа-каналу (JPEG його не підтримує)
@@ -129,6 +129,7 @@ def save_jpeg_and_url_from_svg(form, img_32x32):
     try:
         image_instance = form.save(commit=False)
         image_instance.cloudinary_image = cloudinary_url
+        image_instance.user = request_user  # прив'язування картинки до поточного користувача
         image_instance.save()  # при цьому іде запис в БД і запис оригінального файлу на диск
     except Exception as e:
         return HttpResponseServerError(f"Помилка при збереженні в БД: {str(e)}")
@@ -148,13 +149,14 @@ def jpg_classification(img_32x32_array, class_name_modelinference):
     return predicted_class
 
 
-def save_jpeg_and_url_from_jpg_and_jpeg(form, img_32x32):
+def save_jpeg_and_url_from_jpg_and_jpeg(form, img_32x32, request_user):
 
     cloudinary_url = save_picture_to_claud(img_32x32)[0]
     # Збереження URL зображення з Cloudinary у базу даних
     try:
         image_instance = form.save(commit=False)
         image_instance.cloudinary_image = cloudinary_url
+        image_instance.user = request_user  # прив'язування картинки до поточного користувача
         image_instance.save()  # при цьому іде запис в БД і запис оригінального файлу на диск
     except Exception as e:
         return HttpResponseServerError(f"Помилка при збереженні в БД: {str(e)}")
@@ -170,7 +172,3 @@ def remove_img_from_cloud(public_id: str) -> None:
 
 
 PUBLIC_ID = {"public_id": None} # зберігає public id попередньго фото
-
-    
-
-    
