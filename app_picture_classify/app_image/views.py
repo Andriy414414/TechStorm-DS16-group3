@@ -99,7 +99,15 @@ def home(request):
                 # збереження зображення в хмару, його url в базу даних
                 save_jpeg_and_url_from_jpg_and_jpeg(form, img_32x32)
 
+            # видаляємо тимчасовий файл з диска
+            os.remove(uploaded_image.name)
+
     return render(request,
                   template_name='app_image/index.html',
                   context={"form": form, "output_text": predicted_class, "uploaded_image_url": img_url})
 
+
+def home_page(request):
+
+    return render(request,
+                  template_name='app_image/home_page.html')

@@ -1,0 +1,42 @@
+{% extends "app_image/base.html" %}
+
+{% block content %}
+
+<div>
+    <h2>Аутентифікація</h2>
+</div>
+
+{% if messages %}
+<div>
+    {% for message in messages %}
+    <div {% if message.tags %} class="alert-{{ message.tags }}" {% endif %}>{{ message }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<form action="{% url 'users:login' %}" method="post">
+    {% csrf_token %}
+
+    <div class="mb-3 row">
+        <label class="col-sm-5 col-form-label" style="text-align: right; margin-right: 0px;">Ім'я користувача:</label>
+        <div class="col-sm-3" style="text-align: left; margin-left: 0px;">
+            {{ form.username }}
+            <span>{{ form.errors.username }}</span>
+        </div>
+    </div>
+
+    <div class="mb-3 row">
+        <label class="col-sm-5 col-form-label" style="text-align: right; margin-right: 0px;">Пароль:</label>
+        <div class="col-sm-3" style="text-align: left; margin-left: 0px;">
+            {{ form.password }}
+            <span>{{ form.errors.password }}</span>
+        </div>
+    </div>
+
+    <div class="grid">
+        <button type="submit">Підтвердити</button>
+        <button type="reset" class="secondary">Скинути</button>
+    </div>
+</form>
+
+{% endblock %}

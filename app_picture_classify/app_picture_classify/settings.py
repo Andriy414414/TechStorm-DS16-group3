@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'app_image',
     'cloudinary',
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -148,3 +149,5 @@ cloudinary.config(
     api_key=CLOUDINARY_API_KEY,
     api_secret=CLOUDINARY_API_SECRET
 )
+
+# LOGOUT_REDIRECT_URL = 'app_image/home_page/'
