@@ -46,13 +46,31 @@
             {% endif %}
 
 
-<!--                <button type="button" class="btn btn-warning" onclick="window.location.href=''">Logout</button>-->
-                <a href="{% url 'users:logout' %}" class="btn btn-warning">Logout</a>
+            <style>
+                .logout-button {
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                }
+            </style>
 
+            <div style="position:relative;">
+                <a href="{% url 'users:logout' %}" class="btn btn-warning logout-button">Logout</a>
             </div>
 
+            <!--            <style>-->
+            <!--                .logout-button {-->
+            <!--                    position: fixed;-->
+            <!--                    top: 20px;-->
+            <!--                    right: 20px;-->
+            <!--                }-->
+            <!--            </style>-->
+            <!--            <a href="{% url 'users:logout' %}" class="btn btn-warning" style="width: 150px;">Logout</a>-->
+
         </div>
+
     </div>
+</div>
 </div>
 {% endblock %}
 
