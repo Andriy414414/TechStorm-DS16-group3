@@ -1,11 +1,10 @@
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 import os
 
-from django.core.files.uploadedfile import InMemoryUploadedFile
-
-from .utils import save_picture_to_claud, svg_reshape_to_32x32x3, svg_classification, save_jpeg_and_url_from_svg, \
+from .utils import svg_reshape_to_32x32x3, svg_classification, save_jpeg_and_url_from_svg, \
     jpg_classification, save_jpeg_and_url_from_jpg_and_jpeg
-from django.http import HttpResponseServerError
-from django.apps import apps
 from django.shortcuts import render, redirect
 from .forms import ImageForm
 from .models import ImageModel
@@ -15,14 +14,8 @@ from wand.image import Image as WandImage
 from wand.color import Color
 from PIL import Image as PillowImage
 import io
-import numpy as np
-import matplotlib.pyplot as plt
 
 img_public_id = None
-
-import cloudinary
-import cloudinary.uploader
-import cloudinary.api
 
 
 def destroy_original_image_from_cloud(func):
@@ -68,10 +61,7 @@ def home(request):
     if request.method == 'POST':
         form = ImageForm(request.POST, request.FILES, instance=ImageModel())
         if form.is_valid():
-            # global img_public_id
             uploaded_image = request.FILES['original_file_name']  # отримуємо завантажену картинку (тимчасовий файл)
-            # img_url, img_public_id = save_picture_to_claud(PillowImage.open(uploaded_image))
-            # PUBLIC_ID['public_id'] = img_public_id
             file_extension = os.path.splitext(uploaded_image.name)[1]  # отримуємо розширення тимчасового файла
 
             if file_extension == '.svg':
@@ -83,17 +73,14 @@ def home(request):
                     with img.convert('png') as converted_img:
                         # Замінюємо вміст uploaded_image на вміст конвертованого PNG-файлу
                         uploaded_image1 = converted_img.make_blob()
-                print("Замінили вміст uploaded_image на вміст конвертованого PNG-файлу")
 
-                # Сохраняем файл в Cloudinary
+                # зберігаємо файл в Cloudinary
                 cloudinary_response = cloudinary.uploader.upload(uploaded_image1)
-                print("Зберегли СВГ в Клауд")
-                # Получаем URL загруженного изображения из ответа Cloudinary
+                # отримаємо URL завантаженого зображення з відповіді Cloudinary
                 img_url = cloudinary_response['secure_url']
-                print("=========++++++++++++SVG==============++++++++++++++++")  # working--------------
 
                 PUBLIC_ID = cloudinary_response['public_id']
-                # Сохраняем PUBLIC_ID в сессии
+                # зберігаємо PUBLIC_ID в сесії
                 request.session['PUBLIC_ID'] = PUBLIC_ID
 
                 # створюємо об'єкт зображення Pillow з байтового рядка
@@ -110,18 +97,14 @@ def home(request):
 
             else:
                 # ---------------------------------------Растрові зображення (чорно-білі та кольорові)
-                # img_url, img_public_id = save_picture_to_claud(PillowImage.open(uploaded_image))
-                # PUBLIC_ID['public_id'] = img_public_id
-
-                # Сохраняем файл в Cloudinary
+                # Зберігаємо файл в Cloudinary
                 cloudinary_response = cloudinary.uploader.upload(uploaded_image)
                 print("Зберегли СВГ в Клауд")
-                # Получаем URL загруженного изображения из ответа Cloudinary
+                # Отримаємо URL завантаженого зображення з відповіді Cloudinary
                 img_url = cloudinary_response['secure_url']
-                print("=========++++++++++++SVG==============++++++++++++++++")  # working--------------
 
                 PUBLIC_ID = cloudinary_response['public_id']
-                # Сохраняем PUBLIC_ID в сессии
+                # зберігаємо PUBLIC_ID в сесії
                 request.session['PUBLIC_ID'] = PUBLIC_ID
 
                 # отримуємо зображення розміром 32х32 пікселі з оригінального зображення та відповідного масиву
@@ -135,7 +118,6 @@ def home(request):
 
             # видаляємо тимчасовий файл з диска
             os.remove(uploaded_image.name)
-
 
     return render(request,
                   template_name='app_image/index.html',
