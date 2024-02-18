@@ -15,7 +15,6 @@ from PIL import Image as PillowImage
 from django.apps import apps
 
 
-
 def save_picture_to_claud(img_32x32: PIL.Image.Image):
     """
     Збереження зображення зі згенерованим випадковим ім'ям у Cloudinary.
