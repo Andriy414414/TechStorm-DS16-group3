@@ -66,7 +66,7 @@ def home(request):
 
             if file_extension == '.svg':
                 # Створюємо тимчасовий файл для збереження PNG-зображення
-                with WandImage(blob=uploaded_image.read(), format='svg', width=32, height=32,
+                with WandImage(blob=uploaded_image.read(), format='svg', width=300, height=300,
                                background=Color('#00000000')) as img:
                     # Конвертуємо SVG у PNG
                     img.compression_quality = 100  # якіст стискання (від 0 до 100)
@@ -99,7 +99,6 @@ def home(request):
                 # ---------------------------------------Растрові зображення (чорно-білі та кольорові)
                 # Зберігаємо файл в Cloudinary
                 cloudinary_response = cloudinary.uploader.upload(uploaded_image)
-                print("Зберегли СВГ в Клауд")
                 # Отримаємо URL завантаженого зображення з відповіді Cloudinary
                 img_url = cloudinary_response['secure_url']
 
