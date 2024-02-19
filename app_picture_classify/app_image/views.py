@@ -1,11 +1,10 @@
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 import os
 
-from django.core.files.uploadedfile import InMemoryUploadedFile
-
-from .utils import save_picture_to_claud, svg_reshape_to_32x32x3, svg_classification, save_jpeg_and_url_from_svg, \
+from .utils import svg_reshape_to_32x32x3, svg_classification, save_jpeg_and_url_from_svg, \
     jpg_classification, save_jpeg_and_url_from_jpg_and_jpeg
-from django.http import HttpResponseServerError
-from django.apps import apps
 from django.shortcuts import render, redirect
 from .forms import ImageForm
 from .models import ImageModel
@@ -15,22 +14,21 @@ from wand.image import Image as WandImage
 from wand.color import Color
 from PIL import Image as PillowImage
 import io
-import numpy as np
-import matplotlib.pyplot as plt
 
 img_public_id = None
 
 
 def destroy_original_image_from_cloud(func):
     """
-Функція destroy_original_image_from_cloud — це декоратор, 
-який видалить оригінальне зображення з cloudinary після виконнання основної функції
+    Функція destroy_original_image_from_cloud — це декоратор,
+    який видалить оригінальне зображення з cloudinary після виконнання основної функції
     """
 
-    def inner(*args, **kwargs):
-        if PUBLIC_ID.get("public_id"):
-            remove_img_from_cloud(PUBLIC_ID.get("public_id"))
-        result = func(*args)
+    def inner(request, *args):
+        # Получаем PUBLIC_ID из сессии
+        if request.session.get('PUBLIC_ID'):
+            remove_img_from_cloud(request.session.get('PUBLIC_ID'))
+        result = func(request, *args)
 
         return result
 
@@ -49,6 +47,11 @@ class ModelInference:
         return сlass_names[predicted_class]
 
 
+def home_page(request):
+    return render(request,
+                  template_name='app_image/home_page.html')
+
+
 @destroy_original_image_from_cloud
 def home(request):
     form = ImageForm(instance=ImageModel())
@@ -58,22 +61,27 @@ def home(request):
     if request.method == 'POST':
         form = ImageForm(request.POST, request.FILES, instance=ImageModel())
         if form.is_valid():
-            # global img_public_id
             uploaded_image = request.FILES['original_file_name']  # отримуємо завантажену картинку (тимчасовий файл)
-            img_url, img_public_id = save_picture_to_claud(PillowImage.open(uploaded_image))
-            PUBLIC_ID['public_id'] = img_public_id
             file_extension = os.path.splitext(uploaded_image.name)[1]  # отримуємо розширення тимчасового файла
 
             if file_extension == '.svg':
-                # ---------------------------------------Векторні зображення (чорно-білі та кольорові)
-
                 # Створюємо тимчасовий файл для збереження PNG-зображення
-                with WandImage(blob=uploaded_image.read(), format='svg', width=32, height=32,
+                with WandImage(blob=uploaded_image.read(), format='svg', width=300, height=300,
                                background=Color('#00000000')) as img:
                     # Конвертуємо SVG у PNG
+                    img.compression_quality = 100  # якіст стискання (від 0 до 100)
                     with img.convert('png') as converted_img:
                         # Замінюємо вміст uploaded_image на вміст конвертованого PNG-файлу
                         uploaded_image1 = converted_img.make_blob()
+
+                # зберігаємо файл в Cloudinary
+                cloudinary_response = cloudinary.uploader.upload(uploaded_image1)
+                # отримаємо URL завантаженого зображення з відповіді Cloudinary
+                img_url = cloudinary_response['secure_url']
+
+                PUBLIC_ID = cloudinary_response['public_id']
+                # зберігаємо PUBLIC_ID в сесії
+                request.session['PUBLIC_ID'] = PUBLIC_ID
 
                 # створюємо об'єкт зображення Pillow з байтового рядка
                 image = PillowImage.open(io.BytesIO(uploaded_image1))
@@ -89,6 +97,15 @@ def home(request):
 
             else:
                 # ---------------------------------------Растрові зображення (чорно-білі та кольорові)
+                # Зберігаємо файл в Cloudinary
+                cloudinary_response = cloudinary.uploader.upload(uploaded_image)
+                # Отримаємо URL завантаженого зображення з відповіді Cloudinary
+                img_url = cloudinary_response['secure_url']
+
+                PUBLIC_ID = cloudinary_response['public_id']
+                # зберігаємо PUBLIC_ID в сесії
+                request.session['PUBLIC_ID'] = PUBLIC_ID
+
                 # отримуємо зображення розміром 32х32 пікселі з оригінального зображення та відповідного масиву
                 img_32x32, img_32x32_array = preprocess_image(uploaded_image)
 
@@ -96,7 +113,6 @@ def home(request):
                 predicted_class = jpg_classification(img_32x32_array, ModelInference)
 
                 # збереження зображення в хмару, його url в базу даних
-                # save_jpeg_and_url_from_jpg_and_jpeg(form, img_32x32)
                 save_jpeg_and_url_from_jpg_and_jpeg(form, img_32x32, request.user)
 
             # видаляємо тимчасовий файл з диска
@@ -105,8 +121,3 @@ def home(request):
     return render(request,
                   template_name='app_image/index.html',
                   context={"form": form, "output_text": predicted_class, "uploaded_image_url": img_url})
-
-
-def home_page(request):
-    return render(request,
-                  template_name='app_image/home_page.html')

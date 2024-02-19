@@ -15,7 +15,6 @@ from PIL import Image as PillowImage
 from django.apps import apps
 
 
-
 def save_picture_to_claud(img_32x32: PIL.Image.Image):
     """
     Збереження зображення зі згенерованим випадковим ім'ям у Cloudinary.
@@ -50,9 +49,9 @@ def save_picture_to_claud(img_32x32: PIL.Image.Image):
         return HttpResponseServerError(f"URL зображення не отримано, помилка: {str(e)}")
 
 
-
-
 import imghdr
+
+
 def preprocess_image(img):
     """
     Підготовка зображення до роботи (повертається зображення розширенням 32х32)
@@ -150,7 +149,6 @@ def jpg_classification(img_32x32_array, class_name_modelinference):
 
 
 def save_jpeg_and_url_from_jpg_and_jpeg(form, img_32x32, request_user):
-
     cloudinary_url = save_picture_to_claud(img_32x32)[0]
     # Збереження URL зображення з Cloudinary у базу даних
     try:
@@ -171,4 +169,4 @@ def remove_img_from_cloud(public_id: str) -> None:
     print("the image saccessfully deleted")
 
 
-PUBLIC_ID = {"public_id": None} # зберігає public id попередньго фото
+PUBLIC_ID = {"public_id": None}  # зберігає public id попередньго фото
