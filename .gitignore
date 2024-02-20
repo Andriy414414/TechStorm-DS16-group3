@@ -17,9 +17,10 @@ migrations/env.py
 /group_project_photoapp
 tests/test_commet.py
 pycache
-
+/app_picture_classify/db.sqlite3
 .pre-commit-config.yaml
 
+model/log/fit
 # Byte-compiled / optimized / DLL files
 *.py[cod]
 *$py.class
@@ -46,6 +47,7 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
+
 
 # PyInstaller
 #  Usually these files are written by a python script from a template

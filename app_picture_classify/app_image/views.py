@@ -2,6 +2,7 @@ import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 import os
+import numpy as np
 
 from .utils import svg_reshape_to_32x32x3, svg_classification, save_jpeg_and_url_from_svg, \
     jpg_classification, save_jpeg_and_url_from_jpg_and_jpeg
@@ -40,11 +41,31 @@ class ModelInference:
         self.model = model
 
     def predict_class(self, img):
-        сlass_names = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
-        prediction = self.model.predict(img)
-        predicted_class = prediction.argmax()
+        class_names = ['літак', 'автомобіль', 'птах', 'кіт', 'олень', 'собака', 'жаба', 'кінь', 'корабель', 'вантажівка']
 
-        return сlass_names[predicted_class]
+        prediction = self.model.predict(img)
+        result = self.format_predictions(prediction, class_names)
+        return result 
+    
+    def format_predictions(self, predictions, class_names):
+        main_classes = np.argmax(predictions, axis=1)
+        second_classes = np.argsort(-predictions, axis=1)[:, 1]
+
+        percentages_main = np.zeros(len(predictions))
+        percentages_second = np.zeros(len(predictions))
+        percentages_others = np.zeros(len(predictions))
+
+        formatted_predictions = []
+
+        for i in range(len(predictions)):
+            sum_all = np.sum(predictions[i])
+            percentages_main[i] = predictions[i][main_classes[i]] / sum_all
+            percentages_second[i] = predictions[i][second_classes[i]] / sum_all
+            percentages_others[i] = 1 - percentages_main[i] - percentages_second[i]
+
+            formatted_predictions.append(f"{class_names[main_classes[i]]} - {percentages_main[i]*100:.2f}%, {class_names[second_classes[i]]} - {percentages_second[i]*100:.2f}%, Інші класи - {percentages_others[i]*100:.2f}%")
+
+        return ", ".join(formatted_predictions)
 
 
 def home_page(request):
