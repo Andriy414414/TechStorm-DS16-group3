@@ -5,7 +5,7 @@ from django import forms
 
 class ImageForm(ModelForm):
     original_file_name = FileField(widget=FileInput(attrs={
-        "class": "form-control-lg form-control mx-auto",
+        "class": ["custom-file"],
         "name": "image",
         "id": "image",
         "accept": "image/*",

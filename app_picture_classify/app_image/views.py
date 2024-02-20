@@ -40,7 +40,8 @@ class ModelInference:
         self.model = model
 
     def predict_class(self, img):
-        сlass_names = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
+        # сlass_names = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
+        сlass_names = ['літак', 'автомобіль', 'птах', 'кіт', 'олень', 'собака', 'жаба', 'кінь', 'вівця', 'вантажівка']
         prediction = self.model.predict(img)
         predicted_class = prediction.argmax()
 
@@ -115,8 +116,8 @@ def home(request):
                 # збереження зображення в хмару, його url в базу даних
                 save_jpeg_and_url_from_jpg_and_jpeg(form, img_32x32, request.user)
 
-            # видаляємо тимчасовий файл з диска
-            os.remove(uploaded_image.name)
+                # видаляємо тимчасовий файл з диска
+                os.remove(uploaded_image.name)
 
     return render(request,
                   template_name='app_image/index.html',
