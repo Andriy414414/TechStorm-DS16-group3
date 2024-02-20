@@ -37,7 +37,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-&4m@xrazgq-4pjoyxq=mp_wm&z^w833uybg8pes&g=+%lj0xfj'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['127.0.0.1', 'my.piclhub.pp.ua', 'piclhub.pp.ua']
 
