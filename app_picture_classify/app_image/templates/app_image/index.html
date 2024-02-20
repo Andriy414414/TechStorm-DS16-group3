@@ -1,0 +1,48 @@
+{% extends 'app_image/base.html' %}
+{% block content %}
+    <div style="display: flex; justify-content: center;">
+        <div class="container text-center">
+            {% if form.errors and form.non_field_errors %}
+            <div class="alert alert-danger" role="alert">
+                A simple danger alert—check it out!
+            </div>
+            {% endif %}
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+            </form>
+            <form action="{% url 'app_image:home' %}" method="post" enctype="multipart/form-data" class="mb-3">
+                <div style="margin-top: 20px;">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <div class="custom-file">
+                            {{ form.original_file_name }}
+                            <label class="custom-file-label" style="background-color: rgb(250, 189, 76); color: black; font-size: 18px; border-radius: 10px; padding: 10px 30px 10px 30px;" for="image">Вибрати файл</label>
+                        </div>
+                    </div>
+                </div>
+                <div style="margin-top: 20px;">
+                    <button type="submit" class="btn" style="background-color: rgb(250, 189, 76); color: black; font-size: 18px; border-radius: 10px; padding: 10px 30px 10px 30px;">Класифікувати</button>
+                    <label for="action" class="form-label" style="font-size: 18px;"></label>
+                </div>
+            </form>
+            {% if uploaded_image_url %}
+            <div class="card" style="width: 18rem; margin: 20px auto;">
+                <img src="{{ uploaded_image_url }}" class="card-img-top" alt="Uploaded Image">
+                <div class="card-body">
+                    <p style="font-size: 20px;">{{ output_text | linebreaks }}</p>
+                </div>
+            </div>
+            {% endif %}
+            <style>
+                .logout-button {
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                }
+            </style>
+            <div style="position:relative;">
+                <a href="{% url 'users:logout' %}" class="btn btn-warning logout-button">Logout</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,83 @@
+.myclass {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+
+.myclass + label {
+    font-size: 0.875rem;
+    line-height: 1;
+    font-weight: 400;
+    color: [whatever you want];
+    background-color: [whatever you want];
+    border-color: [whatever you want];
+    display: inline-block;
+    cursor: pointer;
+    vertical-align: top;
+    margin-bottom: .5rem;
+    box-sizing: border-box;
+    border-radius: 20px;
+}
+
+.myclass:focus + label, .myclass + label:hover {
+    background-color: #007bff;
+}
+
+
+
+
+
+
+
+input[type="file"] {
+    display: none;
+}
+
+/* Стилізація псевдоелемента file-selector-button */
+input[type="file"]::file-selector-button {
+    background-color: #007bff; /* Змініть колір за потребою */
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    border: none;
+    outline: none;
+}
+
+/* Стилізація тексту на кнопці */
+input[type="file"]::file-selector-button::before {
+    content: 'hallo'; /* Змініть текст кнопки за потребою */
+}
+
+/* Додаткові стилі, якщо потрібно */
+/* .btn-secondary {
+    background-color: gray !important;
+} */
+
+/* .btn-primary {
+    background-color: #ff0000; /* Змініть колір на потрібний */
+/* } */ */
+
+.container-button {
+    margin-top: 20px;
+}
+.custom-file input[type="file"]::-webkit-file-upload-button {
+    visibility: hidden;
+    display: none;
+}
+
+/* Стилізація тексту у кнопці */
+.custom-file-label::after {
+    content: ''; /* Ваш власний текст */
+}
+
+/* Стилізація кнопки вибору файлу */
+.custom-file-label {
+    padding: 0.375rem 0.75rem;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    cursor: pointer;
+}

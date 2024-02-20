@@ -1,0 +1,33 @@
+---
+- name: piclhub redeploy
+  hosts: localhost
+  vars:
+    HOME_DIR: ~/Picture_Classify_Hub
+  tasks:
+
+  - name: get project
+    git:
+      repo: https://github.com/AleksandrRevuka/Picture_Classify_Hub.git
+      dest: ~/Picture_Classify_Hub
+      update: yes
+      force: yes
+      version: develop
+
+  - name: move env config
+    shell: cp ~/env {{ HOME_DIR }}/app_picture_classify/.env
+
+
+  - name:  rebuild docker images
+    shell: docker-compose -f docker-compose.yml build
+    args:
+      chdir: '{{ HOME_DIR }}'
+  
+  - name:  recreate docker container
+    shell: docker-compose -f docker-compose.yml create
+    args:
+      chdir: '{{ HOME_DIR }}'
+
+  - name: start container
+    shell: docker start piclhub && docker start webhook && docker start postgres
+    args:
+      chdir: '{{ HOME_DIR }}'

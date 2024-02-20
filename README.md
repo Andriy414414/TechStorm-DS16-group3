@@ -1,1 +1,1 @@
-# Документація для застосунку "group-project-PictureClassifyHub"
+Документація для застосунку "group-project-PictureClassifyHub"
