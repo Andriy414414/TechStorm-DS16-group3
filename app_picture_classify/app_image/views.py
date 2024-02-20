@@ -35,7 +35,6 @@ def destroy_original_image_from_cloud(func):
 
     return inner
 
-
 class ModelInference:
     def __init__(self, model):
         self.model = model
@@ -45,26 +44,21 @@ class ModelInference:
         prediction = self.model.predict(img)
         result = self.format_predictions(prediction, class_names)
         return result 
-    
+
     def format_predictions(self, predictions, class_names):
         main_classes = np.argmax(predictions, axis=1)
         second_classes = np.argsort(-predictions, axis=1)[:, 1]
 
-        percentages_main = np.zeros(len(predictions))
-        percentages_second = np.zeros(len(predictions))
-        percentages_others = np.zeros(len(predictions))
+        sum_all = np.sum(predictions)
+        percentage_main = predictions[0][main_classes[0]] / sum_all
+        percentage_second = predictions[0][second_classes[0]] / sum_all
+        percentage_others = 1 - percentage_main - percentage_second
 
-        formatted_predictions = []
+        formatted_prediction = f"{class_names[main_classes[0]]} - {percentage_main*100:.2f}%\n"
+        formatted_prediction += f"{class_names[second_classes[0]]} - {percentage_second*100:.2f}%\n"
+        formatted_prediction += f"Інші класи - {percentage_others*100:.2f}%"
 
-        for i in range(len(predictions)):
-            sum_all = np.sum(predictions[i])
-            percentages_main[i] = predictions[i][main_classes[i]] / sum_all
-            percentages_second[i] = predictions[i][second_classes[i]] / sum_all
-            percentages_others[i] = 1 - percentages_main[i] - percentages_second[i]
-
-            formatted_predictions.append(f"{class_names[main_classes[i]]} - {percentages_main[i]*100:.2f}%, {class_names[second_classes[i]]} - {percentages_second[i]*100:.2f}%, Інші класи - {percentages_others[i]*100:.2f}%")
-
-        return ", ".join(formatted_predictions)
+        return formatted_prediction
 
 
 def home_page(request):

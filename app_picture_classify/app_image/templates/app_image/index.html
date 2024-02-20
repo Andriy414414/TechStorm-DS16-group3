@@ -1,57 +1,35 @@
 {% extends 'app_image/base.html' %}
 {% block content %}
     <div style="display: flex; justify-content: center;">
-        <div class="container">
+        <div class="container text-center">
             {% if form.errors and form.non_field_errors %}
             <div class="alert alert-danger" role="alert">
                 A simple danger alert—check it out!
-              </div>
-            {% endif %}
-            <div class="row justify-content-center">
-                <div class="col-md-6">
-                    <form method="post" enctype="multipart/form-data">
-                        {% csrf_token %}
-
-                        <!-- Add other form fields here if needed -->
-                        <!-- <button type="submit" class="btn btn-primary">Submit</button> -->
-                    </form>
-                    <form action="{% url 'app_image:home' %}" method="post" enctype="multipart/form-data" class="mb-3">
-                        <div style="margin-top: 20px;">
-                            {% csrf_token %}
-                            <div class="form-group">
-                                <!-- <label for="{{ form.original_file_name.id_for_label }}">Choose Image:</label> -->
-                                <div class="custom-file">
-                                    {{ form.original_file_name }}
-                                    <label class="custom-file-label" style="background-color: rgb(250, 189, 76); color: black; font-size: 18px; border-radius: 10px; padding: 10px 30px 10px 30px;" for="image">Вибрати файл</label>
-                                </div>
-                            </div>
-                                <!-- {{ form.original_file_name }} -->
-                                <!-- <button type="submit" class="btn btn-primary">{{ form.original_file_name.value }}</button>
-                                {{form.errors.original_file_name}} -->
-                        </div>
-                        <div style="margin-top: 20px;">
-                            <button type="submit" class="btn" style="background-color: rgb(250, 189, 76); color: black; font-size: 18px; border-radius: 10px; padding: 10px 30px 10px 30px;">Класифікувати</button>
-                            <label for="action" class="form-label" style="font-size: 18px;"></label>
-                        </div>
-
-                </div>
             </div>
-            <!-- <div class="row justify-content-center">
-                <div class="col-md-6">
-                    <div class="card text-center">
-                        <div class="card-body">
-                            <h5 class="card-title" style="font-size: 20px;">Результат: {{ output_text }}</h5>
+            {% endif %}
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+            </form>
+            <form action="{% url 'app_image:home' %}" method="post" enctype="multipart/form-data" class="mb-3">
+                <div style="margin-top: 20px;">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <div class="custom-file">
+                            {{ form.original_file_name }}
+                            <label class="custom-file-label" style="background-color: rgb(250, 189, 76); color: black; font-size: 18px; border-radius: 10px; padding: 10px 30px 10px 30px;" for="image">Вибрати файл</label>
                         </div>
                     </div>
                 </div>
-            </div> -->
-            <div class="row justify-content-center">
-                <div></div>
+                <div style="margin-top: 20px;">
+                    <button type="submit" class="btn" style="background-color: rgb(250, 189, 76); color: black; font-size: 18px; border-radius: 10px; padding: 10px 30px 10px 30px;">Класифікувати</button>
+                    <label for="action" class="form-label" style="font-size: 18px;"></label>
+                </div>
+            </form>
             {% if uploaded_image_url %}
-            <div class="card" style="width: 18rem;" style="margin-top: 20px;">
-                <img src="{{ uploaded_image_url }}" style="margin-top: 20px;" class="card-img-top" alt="Uploaded Image"{{output_text}}>
-                <!-- <div class="card-body"> -->
-                    <p style="font-size: 20px;">{{ output_text }}</p>
+            <div class="card" style="width: 18rem; margin: 20px auto;">
+                <img src="{{ uploaded_image_url }}" class="card-img-top" alt="Uploaded Image">
+                <div class="card-body">
+                    <p style="font-size: 20px;">{{ output_text | linebreaks }}</p>
                 </div>
             </div>
             {% endif %}
@@ -67,9 +45,4 @@
             </div>
         </div>
     </div>
-</div>
-</div>
 {% endblock %}
-
-
-
