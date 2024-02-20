@@ -42,7 +42,6 @@ class ModelInference:
 
     def predict_class(self, img):
         class_names = ['літак', 'автомобіль', 'птах', 'кіт', 'олень', 'собака', 'жаба', 'кінь', 'корабель', 'вантажівка']
-
         prediction = self.model.predict(img)
         result = self.format_predictions(prediction, class_names)
         return result 
@@ -136,8 +135,8 @@ def home(request):
                 # збереження зображення в хмару, його url в базу даних
                 save_jpeg_and_url_from_jpg_and_jpeg(form, img_32x32, request.user)
 
-            # видаляємо тимчасовий файл з диска
-            os.remove(uploaded_image.name)
+                # видаляємо тимчасовий файл з диска
+                os.remove(uploaded_image.name)
 
     return render(request,
                   template_name='app_image/index.html',
