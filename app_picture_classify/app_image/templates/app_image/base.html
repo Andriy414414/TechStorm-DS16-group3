@@ -21,20 +21,42 @@
         }
     </style>
 </head>
+
 <body>
 
-    <div class="container">
-        <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-          <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
-            <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
-            <span class="fs-4">Picture Classify Hub</span>
-          </a>
+    <main style="width: 1200px" class="container">
+        
+        <nav class="navbar navbar-expand-lg bg-info bg-opacity-10 mb-3 mt-3 border border-start-0 border-end-0 border-info">
+            <div class="container-fluid">
+            <h1 class="navbar-brand text-primary fs-2 fw-bold" href="/">Picture Classify Hub</h1>
+            <div class="collapse navbar-collapse" id="navbarScroll">
+                <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="/">Home</a>
+                </li>
+                </ul>
+                
+                {% if user.is_authenticated %}
+                    <div class="d-flex ms-5">
+                        <a class="nav-link ms-3 text-warning fw-bold" href="{% url 'users:logout' %}">Logout</a>
+                    </div>
+                {% else %}
+                    <div class="d-flex ms-5">
+                        <a class="nav-link text-warning fw-bold" href="{% url 'users:signup' %}">Sign Up</a>
+                        <a class="nav-link ms-3 text-warning fw-bold" href="{% url 'users:login' %}">Login</a>
+                    </div>
+                {% endif %}
+    
+            </div>
+            </div>
+        </nav>
+       
+        <div class="row">
+            {% block content %} {% endblock %}
         </div>
-    </div>
 
-    <div class="text-center">
-        {% block content %}
-        {% endblock %}
-    </div>
+    </main>
+
 </body>
 </html>
+
