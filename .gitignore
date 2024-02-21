@@ -20,7 +20,7 @@ pycache
 /app_picture_classify/db.sqlite3
 .pre-commit-config.yaml
 
-model/log/fit
+model/log
 # Byte-compiled / optimized / DLL files
 *.py[cod]
 *$py.class
