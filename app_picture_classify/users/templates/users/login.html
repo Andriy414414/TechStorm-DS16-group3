@@ -2,10 +2,6 @@
 
 {% block content %}
 
-<div>
-    <h2>Аутентифікація</h2>
-</div>
-
 {% if messages %}
 <div>
     {% for message in messages %}
@@ -14,28 +10,37 @@
 </div>
 {% endif %}
 
-<form action="{% url 'users:login' %}" method="post">
-    {% csrf_token %}
 
-    <div class="mb-3 row">
-        <label class="col-sm-5 col-form-label" style="text-align: right; margin-right: 0px;">Ім'я користувача:</label>
-        <div class="col-sm-3" style="text-align: left; margin-left: 0px;">
-            {{ form.username }}
-            <span>{{ form.errors.username }}</span>
+<div class="container">
+    <div class="d-flex justify-content-center">
+        <div class="col-md-4">
+            <h2 class="text-center mb-4">Аутентифікація</h2>
+
+                <form action="{% url 'users:login' %}" method="post">
+                    {% csrf_token %}
+                    <div class="form-floating mb-3 col-md-12">
+                        {{ form.username }}
+                        <label for="{{ form.username.id_for_label }}">Username:</label>
+                        {% for error in form.username.errors %}
+                            <label class="text-danger" for="floatingInputInvalid"> {{ error }}</label>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="form-floating mb-3 col-md-12">
+                        {{ form.password }}
+                        <label for="{{ form.password.id_for_label }}">Password:</label>
+                        {% for error in form.password.errors %}
+                            <label class="text-danger" for="floatingInputInvalid"> {{ error }}</label>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="d-grid gap-2 col-md-12">
+                        <button type="submit" class="btn btn-primary">Надіслати</button>
+                        <button type="reset" class="btn btn-warning">Скинути</button>
+                    </div>
+                </form>
+            </div>
         </div>
-    </div>
-
-    <div class="mb-3 row">
-        <label class="col-sm-5 col-form-label" style="text-align: right; margin-right: 0px;">Пароль:</label>
-        <div class="col-sm-3" style="text-align: left; margin-left: 0px;">
-            {{ form.password }}
-            <span>{{ form.errors.password }}</span>
-        </div>
-    </div>
-
-    <div class="grid">
-        <button type="submit">Підтвердити</button>
-        <button type="reset" class="secondary">Скинути</button>
     </div>
 </form>
 

@@ -19,12 +19,16 @@ tests/test_commet.py
 pycache
 /app_picture_classify/db.sqlite3
 .pre-commit-config.yaml
+<<<<<<< HEAD
 
+model/log
+=======
 model/log/fit
+>>>>>>> mod_front
 # Byte-compiled / optimized / DLL files
 *.py[cod]
 *$py.class
-
+model/log
 # C extensions
 *.so
 
