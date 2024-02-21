@@ -19,6 +19,7 @@ libclang==16.0.6
 markdown==3.5.2
 markdown-it-py==3.0.0
 markupsafe==2.1.5
+matplotlib
 mdurl==0.1.2
 ml-dtypes==0.2.0
 namex==0.0.7
@@ -46,6 +47,8 @@ tensorflow-io-gcs-filesystem==0.36.0
 tensorflow[and-cuda]
 termcolor==2.4.0
 typing-extensions==4.9.0
+tzdata
 urllib3==2.2.0
 werkzeug==3.0.1
 wrapt==1.14.1
+wand==0.6.13
