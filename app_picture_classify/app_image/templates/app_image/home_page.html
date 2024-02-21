@@ -1,18 +1,28 @@
-{% extends 'app_image/base.html' %}
+                {% extends 'app_image/base.html' %}
 
-{% block content %}
+                {% block content %}
+                    <div class="mt-3 d-flex justify-content-center flex-column">
+                        <h2>Ласкаво просимо до нейромережі для класифікації зображень!</h2>
+                        {% if user.is_authenticated %}
+                        <div class="mt-3">
+                            <a href="home/" class="btn btn-warning btn-lg">До класифікації</a>
+                        </div>
+                        {% endif %}
 
-<body>
-<main style="width: 1200px" class="container">
-    <div class="d-flex justify-content-center flex-column align-items-center">
-        <h2>Нейромережа для класифікації зображень</h2>
-        {% if user.is_authenticated %}
-        <div class="mt-3">
-            <a href="home/" class="btn btn-outline-warning btn-lg">До класифікації</a>
-        </div>
-        {% endif %}
-    </div> 
-</main>
-</body>
-{% endblock %}
+                        <div class="mt-3">
+                            <h3>Функціонал застосунку:</h3>
+                            <ul>
+                                <li>Реєстрація (sign up), аутентифікація (login) та вихід із застосунку (logout).</li>
+                                <li>Класифікація зображень за 10 класами: 'літак', 'автомобіль', 'птах', 'кіт', 'олень', 'собака', 'жаба', 'кінь', 'корабель', 'вантажівка'.</li>
+                                <li>Формат зображень для обробки нейромережею: .jpg, .jpeg та .svg.</li>
+                                <li>Виведення зображення із визначеним класом на головну сторінку.</li>
+                                <li>Збереження в Cloudinary підготовленого зображення розширенням 32х32 пікселя для можливості наповнення додаткового датасету.</li>
+                                <li>Збереження в базі даних інформації про користувача із прив'язкою до його зображень.</li>
+                                <li>Збереження в базі даних URL на зображення в Cloudinary.</li>
+                            </ul>
+                            <h3>Для продовження роботи потрібна реєстрація!</h3>
+                        </div>
+
+                    </div> 
+                {% endblock %}
 
