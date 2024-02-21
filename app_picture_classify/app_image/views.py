@@ -170,7 +170,7 @@ def home(request):
                 save_jpeg_and_url_from_jpg_and_jpeg(form, img_32x32, request.user)
 
                 # видаляємо тимчасовий файл з диска
-                os.remove(uploaded_image.name)
+                # os.remove(uploaded_image.name)
 
 
 
