@@ -4,6 +4,7 @@ import cloudinary.api
 import os
 import numpy as np
 import io
+from django.core.paginator import Paginator
 
 from .utils import (svg_reshape_to_32x32x3, 
                     svg_classification, 
@@ -104,13 +105,14 @@ def home(request):
     The home function is the main function of the app.
     It handles all requests to the root URL, and renders a template with a form for uploading images.
     If an image is uploaded, it will be preprocessed and classified by our model, then rendered in another template.
-    
+
     :param request: Get the request object
     :return: A rendered template
     """
     form = ImageForm(instance=ImageModel())
     predicted_class = ''
     img_url = None
+    user_images_count = ImageModel.objects.filter(user=request.user).count()
 
     if request.method == 'POST':
         form = ImageForm(request.POST, request.FILES, instance=ImageModel())
@@ -176,4 +178,22 @@ def home(request):
 
     return render(request,
                   template_name='app_image/index.html',
-                  context={"form": form, "output_text": predicted_class, "uploaded_image_url": img_url})
+                  context={"form": form, "output_text": predicted_class, "uploaded_image_url": img_url, "user_images_count": user_images_count})
+
+
+def images(request, page=1):
+    user_images = ImageModel.objects.filter(user=request.user)
+
+    per_page = 4
+    paginator = Paginator(user_images, per_page)
+    page_obj = paginator.page(page)
+    context = {'pictures': page_obj}
+    return render(request, 'app_image/images.html', context=context)
+
+
+
+
+def model_plots(request):
+    return render(request, 'app_image/model_plots.html')
+
+

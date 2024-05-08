@@ -1,0 +1,30 @@
+{% extends 'app_image/base.html' %}
+
+{% block content %}
+
+<div class="container-for-plots">
+        <div class="col-plots">
+            <div class="card-plot">
+                <img src="/static/app_image/plot1.jpg" class="card-imf-plot" alt="...">
+                <span class ="card-text-plot">Тренувальна та валідаційна помилка</span>
+            </div>
+            <div class="card-plot">
+                <img src="/static/app_image/plot2.jpg" class="card-imf-plot" alt="...">
+                <span class ="card-text-plot">Тренувальна та валідаційна точність</span>
+            </div>
+             <div class="card-plot">
+                <img src="/static/app_image/plot3.jpg" class="card-imf-plot" alt="...">
+                <span class ="card-text-plot">Precision/Recall</span>
+            </div>
+             <div class="card-plot">
+                <img src="/static/app_image/plot4.jpg" class="card-imf-plot" alt="...">
+                <span class ="card-text-plot">Confusion Matrix</span>
+            </div>
+        </div>
+</div>
+
+
+
+{% endblock %}
+
+

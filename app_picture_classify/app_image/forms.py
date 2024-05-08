@@ -9,6 +9,7 @@ class ImageForm(ModelForm):
         "name": "image",
         "id": "image",
         "accept": "image/*",
+        "label": "Choose"
         }))
 
     class Meta:

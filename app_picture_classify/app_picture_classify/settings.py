@@ -14,23 +14,27 @@ from pathlib import Path
 from dotenv import load_dotenv
 from django.utils.translation import gettext_lazy as _
 import cloudinary.api
+import environ
 
-
-load_dotenv()
-
-DB_HOST = os.environ.get('DB_HOST')
-DB_PASSWORD = os.environ.get('DB_PASSWORD')
-DB_USER = os.environ.get('DB_USER')
-DB_PORT = os.environ.get('DB_PORT')
-
-CLOUDINARY_NAME = os.environ.get('CLOUDINARY_NAME')
-CLOUDINARY_API_KEY = os.environ.get('CLOUDINARY_API_KEY')
-CLOUDINARY_API_SECRET = os.environ.get('CLOUDINARY_API_SECRET')
+#
+# load_dotenv()
+#
+# DB_HOST = os.environ.get('DB_HOST')
+# DB_PASSWORD = os.environ.get('DB_PASSWORD')
+# DB_USER = os.environ.get('DB_USER')
+# DB_PORT = os.environ.get('DB_PORT')
+#
+# CLOUDINARY_NAME = os.environ.get('CLOUDINARY_NAME')
+# CLOUDINARY_API_KEY = os.environ.get('CLOUDINARY_API_KEY')
+# CLOUDINARY_API_SECRET = os.environ.get('CLOUDINARY_API_SECRET')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Quick-start development settings - unsuitable for production
+env = environ.Env()
+environ.Env.read_env(BASE_DIR / '.env')
+# Quick-start development
+# - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -39,7 +43,7 @@ SECRET_KEY = 'django-insecure-&4m@xrazgq-4pjoyxq=mp_wm&z^w833uybg8pes&g=+%lj0xfj
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', '152.70.59.169', 'my.piclhub.pp.ua', 'piclhub.pp.ua']
+ALLOWED_HOSTS = []
 
 # Application definition
 
@@ -53,6 +57,7 @@ INSTALLED_APPS = [
     'app_image',
     'cloudinary',
     'users',
+    'storages',
 ]
 
 MIDDLEWARE = [
@@ -88,22 +93,22 @@ WSGI_APPLICATION = 'app_picture_classify.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': DB_USER,
-        'USER': DB_USER,
-        'PASSWORD': DB_PASSWORD,
-        'HOST': DB_HOST,
-        'PORT': DB_PORT,
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': DB_USER,
+#         'USER': DB_USER,
+#         'PASSWORD': DB_PASSWORD,
+#         'HOST': DB_HOST,
+#         'PORT': DB_PORT,
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -127,12 +132,10 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
 
-LANGUAGE_CODE = 'uk'
+LANGUAGE_CODE = 'en'
 
 LANGUAGES = [
-    ('uk', 'Українська'),
-    ('ru', 'Русский'),
-    ('en', 'English'),
+    ('en', 'English')
 ]
 # LANGUAGE_CODE = 'en-us'
 
@@ -147,15 +150,36 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+
+LOGIN_URL = '/users/signin/'
+LOGIN_REDIRECT_URL = 'app_image:home'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 cloudinary.config(
-    cloud_name=CLOUDINARY_NAME,
-    api_key=CLOUDINARY_API_KEY,
-    api_secret=CLOUDINARY_API_SECRET
+    cloud_name='dgnllhcuv',
+    api_key='491769822839874',
+    api_secret='rULI1pd1d79sDwJy-NM_bsJGKLI'
 )
 
 # LOGOUT_REDIRECT_URL = 'app_image/home_page/'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = env('EMAIL_HOST')
+EMAIL_PORT = env('EMAIL_PORT')
+EMAIL_STARTTLS = False
+EMAIL_USE_SSL = True
+EMAIL_USE_TLS = False
+EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+
+AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = env('AWS_STORAGE_BUCKET_NAME')
+AWS_S3_REGION_NAME = env('AWS_S3_REGION_NAME')
+
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'

@@ -7,7 +7,7 @@
 
   - name: get project
     git:
-      repo: https://github.com/AleksandrRevuka/Picture_Classify_Hub.git
+      repo: https://github.com/
       dest: ~/Picture_Classify_Hub
       update: yes
       force: yes

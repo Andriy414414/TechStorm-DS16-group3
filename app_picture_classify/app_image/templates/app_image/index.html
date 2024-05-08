@@ -1,36 +1,50 @@
 {% extends 'app_image/base.html' %}
 {% block content %}
-    <div class="container">
-        <div class="d-flex justify-content-center"> <!-- Відцентрований контейнер -->
+    <div class="upload_container">
             <div class="text-center">
                 {% if form.errors and form.non_field_errors %}
                 <div class="alert alert-danger" role="alert">
                     A simple danger alert—check it out!
                 </div>
                 {% endif %}
+                <div class="container-for-user">
+                    <div class="own-information">
+                        <p><strong>МІЙ КАБІНЕТ</strong></p>
+                        <p><strong>Ім'я користувача:</strong> {{ user.username }}</p>
+                        <p><strong>Email:</strong> {{ user.email }}</p>
+                        <p><strong>Кількість картинок:</strong> {{ user_images_count }}</p>
+                        <p><strong>Cтворено обліковий запис:</strong> {{ user.date_joined }}</p>
+                        {% if user.is_superuser %}
+                            <p><strong>Cтатус: суперюзер</strong></p>
+                        {% else %}
+                            <p><strong>Cтатус: звичайний користувач</strong></p>
+                        {% endif %}
+                    </div>
+                </div>
 
-                <form action="{% url 'app_image:home' %}" method="post" enctype="multipart/form-data" class="mb-3">
+                <form  action="{% url 'app_image:home' %}" method="post" enctype="multipart/form-data" class="mb-3">
                     {% csrf_token %}
-                    <div class="form-group" style="margin-top: 20px; width: 22rem;">
-                        <div class="custom-file d-grid  col-md-12 text-center">
+                    <p class="p-funct"><strong>ОСНОВНИЙ ФУНКЦІОНАЛ</strong></p>
+                    <div class="form-group">
+                        <div class="custom-file">
                             {{ form.original_file_name }}
-                            <label class="btn btn-primary" for="image">Вибрати файл</label>
-
-                            <button type="submit" class="btn btn-warning" style="margin-top: 20px;">Класифікувати</button> 
+                            <button type="submit" class="btn-warning-home">Класифікувати</button>
+                            <a href="{% url 'app_image:root_paginate' 1 %}" class="btn-warning-home-a">Завантажені фото</a>
+                             <a href="{% url 'app_image:model_plots' %}" class="btn-warning-home-a">Модель</a>
                         </div>
                     </div>
                 </form>
 
                 {% if uploaded_image_url %}
-                <div class="card" style="width: 22rem; margin: 20px auto;">
+                <div class="card">
                     <img src="{{ uploaded_image_url }}" class="card-img-top" alt="Uploaded Image">
                     <div class="card-body">
-                        <p style="font-size: 20px;">{{ output_text | linebreaks }}</p>
+                        <p>{{ output_text | linebreaks }}</p>
                     </div>
                 </div>
                 {% endif %}
             </div>
-        </div>
+
     </div>
 {% endblock %}
 

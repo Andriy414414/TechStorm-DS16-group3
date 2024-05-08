@@ -1,55 +1,44 @@
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login, logout
+from django.shortcuts import render
+from django.views import View
 from django.contrib import messages
-from .forms import RegisterForm, LoginForm
+from django.shortcuts import redirect
+from django.contrib.messages.views import SuccessMessageMixin
+from django.urls import reverse_lazy
+from django.contrib.auth.views import PasswordResetView
+
+from .forms import RegisterForm
 
 
-def signupuser(request):
-    """Представлення реєстрації користувача"""
+# Create your views here.
+class RegisterView(View):
+    form_class = RegisterForm
+    template_name = "users/signup.html"
 
-    if request.user.is_authenticated:
-        return redirect(to='app_image:home')
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect(to="app_image:home")
+        return super(RegisterView, self).dispatch(request, *args, **kwargs)
 
-    if request.method == 'POST':
-        form = RegisterForm(request.POST)
+    def get(self, request):
+        return render(request, self.template_name, {"form": self.form_class})
+
+    def post(self, request):
+        form = self.form_class(request.POST)
+        # print(form)
         if form.is_valid():
+            form.save()
+            username = form.cleaned_data['username']
+            messages.success(request, f'Вітаю {username}. Ваш акаунт успішно створено')
+            print('Redirecting to users:login')
 
-            # створення нового користувача і збереження його в БД
-            user = form.save(commit=False)
-            user.save()
-
-            # перенаправлення користувача на потрібну сторінку
-            return redirect(to='app_image:home')
-        else:
-            # Если форма невалидна, отображаем ее с сообщениями об ошибках
-            return render(request, 'users/signup.html', context={"form": form})
-
-    # якщо запит GET, просто показуємо форму реєстрації
-    return render(request, 'users/signup.html', context={"form": RegisterForm()})
+            return redirect(to="users:login")
+        return render(request, self.template_name, {"form": form})
 
 
-def loginuser(request):
-    """Представлення аутентифікації користувача"""
-
-    if request.user.is_authenticated:
-        return redirect(to='app_image:home')
-
-    if request.method == 'POST':
-        user = authenticate(username=request.POST['username'], password=request.POST['password'])
-        if user is None:
-            messages.error(request, 'Username or password didn\'t match')
-            return redirect(to='users:login')
-
-        login(request, user)
-        return redirect(to='app_image:home')
-
-    return render(request, 'users/login.html', context={"form": LoginForm()})
-
-
-@login_required
-def logoutuser(request):
-    """Вихід із застосунку"""
-
-    logout(request)
-    return redirect(to='app_image:home_page')
+class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
+    template_name = 'users/password_reset.html'
+    email_template_name = 'users/password_reset_email.html'
+    html_email_template_name = 'users/password_reset_email.html'
+    success_url = reverse_lazy('users:password_reset_done')
+    success_message = "An email with instructions to reset your password has been sent to %(email)s."
+    subject_template_name = 'users/password_reset_subject.txt'
