@@ -193,9 +193,6 @@ AWS_S3_REGION_NAME = env('AWS_S3_REGION_NAME')
 
 
 
-
-
-
 SITE_ID = 1
 LOGIN_REDIRECT_URL = 'app_image_categorize:home_page'
 SOCIALACCOUNT_QUERY_EMAIL = True
@@ -220,8 +217,8 @@ SOCIALACCOUNT_PROVIDERS = {
             'access_type': 'online',
         },
         'APP': {
-            'client_id': '998322685409-ddnoq5554i28sbj7h9ou4qgtenlu368n.apps.googleusercontent.com',
-            'secret': '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',
+            'client_id': env('client_id'),
+            'secret': env('secret'),
         }
     }
 }

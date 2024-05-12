@@ -312,8 +312,7 @@ a.btn-warning-home-a:hover{
     align-items: center;
     background: white;
     color: black;
-    max-width: 28%;
-    width: 15em;
+    width: 14em;
     min-width: 12em;
     height: auto;
     border-radius: 0.5em 0.5em 0.5em 0.5em;
@@ -374,7 +373,7 @@ a.btn-warning-home-a:hover{
 
 
 .card-img-top {
-    height: 11em;
+    height: 10em;
     width: 100%;
     border-radius: 0.5em 0.5em 0 0em;
 }
@@ -658,12 +657,24 @@ span.for-next-buttons {
 
 }
 
+
+
+
+
 .own-information p {font-size: 80%;}
+
+
+.card-body p {font-size: 70%;}
 
 @media screen and (max-width: 1150px) {
 .card {
-    margin-left: 0;
-}}
+    margin-left: 7%;
+    width: 12em;
+}
+.card-img-top {
+    height: 9em;
+}
+}
 
 @media screen and (max-width: 1060px) {
  .mb-3 {

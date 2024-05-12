@@ -7,11 +7,16 @@
           content="width=device-width, user-scalable=no, initial-scale=0.85, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>SIGN IN</title>
+     <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/blog/">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3">
+    <link href="https://fonts.googleapis.com/css?family=Playfair&#43;Display:700,900&amp;display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/7199f58f9c.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="/static/user/css/signin_up.css">
 
 </head>
+  {% load socialaccount %}
 <body class="text-center">
-
     <div class="main_top">
         <a href="/" type="button"
                        class="btn-outline-success-signin">На головну</a>
@@ -47,6 +52,10 @@
                     <span>{{form.errors.password}}</span>
                 </div>
                 <button id="profile-button" class="btn_signin" type="submit">Sign in</button>
+                <a href="{% provider_login_url 'google' %}" class="google-btn">
+                     <i class="fa-brands fa-google"></i>
+                    <span class="btn-text">GOOGLE</span>
+                </a>
                 <div style="display: flex; align-items: center; padding-top: 2em;">
                   <hr style="flex: 1; margin-right: 10px; color: black; width: 5em;">
                   <span>or</span>
