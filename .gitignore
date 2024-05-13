@@ -1,6 +1,6 @@
 /.pre-commit-config.yaml
 /.venv
-/poetry.lock
+
 __pycache__/
 postgres-data/
 .ruff_cache
@@ -12,7 +12,7 @@ postgres-data/
 migrations
 env.txt
 alembic.ini
-pyproject.toml
+
 migrations/env.py
 /group_project_photoapp
 tests/test_commet.py
