@@ -1,0 +1,16 @@
+{% extends 'app_image_categorize/base.html' %}
+{% block content %}
+
+    <div class="card-two-plot">
+     {% load static %}
+        <div class="card-plot-two">
+            <img src="{% static '/app_image/predicted_class_plot1.png' %}" alt="Графічне представлення" class="pic-plot">
+            <span class ="card-text-plot-two">Точність для останньої картинки</span>
+        </div>
+        <div class="card-plot-two">
+            <img src="{% static '/app_image/predicted_class_plot2.png' %}" alt="Графічне представлення" class="pic-plot">
+            <span class ="card-text-plot-two">Точність для всіх спроб</span>
+         </div>
+    </div>
+{% endblock %}
+

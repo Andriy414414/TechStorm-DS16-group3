@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="/static/user/css/signin_up.css">
+</head>
+<body class="text-center">
+    <a href="/" type="button"
+                       class="btn-outline-success-signin">На головну</a>
+    <main class="form-signup">
+        <form class="form-signup-signup"  method="post" autocomplete="off">
+            {% csrf_token %}
+            <h1 class="h1-mb-signup">Create an Account</h1>
+            <div class="form-floating">
+                <label>Name</label>
+                {{form.username}}
+            </div>
+            <span>{{form.errors.username}}</span>
+            <div class="form-floating">
+                <label>Email Address</label>
+                {{form.email}}
+            </div>
+            <span>{{form.errors.email}}</span>
+            <div class="form-floating">
+                <label>Password</label>
+                {{form.password1}}
+            </div>
+             <span>{{form.errors.password1}}</span>
+            <div class="form-floating">
+                <label>Confirm Password</label>
+                {{form.password2}}
+            </div>
+            <span>{{form.errors.password2}}</span>
+            <button class="btn_signup" type="submit">Sign Up</button>
+        </form>
+    </main>
+</body>
+</html>
