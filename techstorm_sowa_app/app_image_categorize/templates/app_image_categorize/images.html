@@ -1,0 +1,33 @@
+{% extends 'app_image_categorize/base.html' %}
+
+{% block content %}
+
+<div class="container-for-pic">
+    {% for pic in pictures %}
+        <div class="col-md-6">
+            <div class="card-pic" id="card-{{ pic.id }}">
+                <img src="{{ pic.original_file_name.url }}" class="card-img-top-main" alt="...">
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<nav class="next-previous-button">
+    <ul class="pager">
+        <li class="previous">
+            <a class="{% if not pictures.has_previous %} disabled {% endif %}"
+                href="{% if pictures.has_previous %} {% url 'app_image_categorize:root_paginate' pictures.previous_page_number %} {% else %} # {% endif %}">
+                <span class="for-previous-buttons" aria-hidden="true">←</span> Previous
+            </a>
+        </li>
+        <li class="next">
+            <a class="{% if not pictures.has_next %} disabled {% endif %}"
+                href="{% if pictures.has_next %} {% url 'app_image_categorize:root_paginate' pictures.next_page_number %} {% else %} # {% endif %}">Next
+                <span class="for-next-buttons" aria-hidden="true">→</span></a>
+        </li>
+    </ul>
+</nav>
+
+{% endblock %}
+
+
