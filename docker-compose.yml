@@ -4,7 +4,7 @@ version: "3.8"
 services:
   code:
     build:
-      context: .
+      context: ../../../Desktop
       dockerfile: Dockerfile
     stdin_open: true # docker run -i
     tty: true        # docker run -t
@@ -33,6 +33,8 @@ services:
       CLOUDINARY_CLOUD_NAME: "${CLOUDINARY_CLOUD_NAME}"
       CLOUDINARY_API_KEY: "${CLOUDINARY_API_KEY}"
       CLOUDINARY_API_SECRET: "${CLOUDINARY_API_SECRET}"
+      client_id: "${client_id}"
+      secret: "${secret}"
 
 
 
