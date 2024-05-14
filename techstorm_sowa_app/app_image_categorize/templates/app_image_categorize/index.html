@@ -1,0 +1,54 @@
+{% extends 'app_image_categorize/base.html' %}
+{% block content %}
+    <div class="upload_container">
+            <div class="text-center">
+                {% if form.errors and form.non_field_errors %}
+                <div class="alert alert-danger" role="alert">
+                    A simple danger alert—check it out!
+                </div>
+                {% endif %}
+                <div class="container-for-user">
+                    <div class="own-information">
+                        <p class="p-first"><strong>МІЙ КАБІНЕТ</strong></p>
+                        <p><strong>Ім'я користувача:</strong> {{ user.username }}</p>
+                        <p><strong>Email:</strong> {{ user.email }}</p>
+                        <p><strong>Кількість картинок:</strong> {{ user_images_count }}</p>
+                        <p><strong>Cтворено обліковий запис:</strong> {{ user.date_joined }}</p>
+                        {% if user.is_superuser %}
+                            <p><strong>Cтатус: суперюзер</strong></p>
+                        {% else %}
+                            <p><strong>Cтатус: звичайний користувач</strong></p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <form  action="{% url 'app_image_categorize:home' %}" method="post" enctype="multipart/form-data" class="mb-3">
+                    {% csrf_token %}
+                    <p class="p-funct"><strong>ОСНОВНИЙ ФУНКЦІОНАЛ</strong></p>
+                    <div class="form-group">
+                        <div class="custom-file">
+                            {{ form.original_file_name }}
+                            <button type="submit" class="btn-warning-home">Класифікувати</button>
+                            <a href="{% url 'app_image_categorize:root_paginate' 1 %}" class="btn-warning-home-a">Завантажені фото</a>
+                             <a href="{% url 'app_image_categorize:model_plots' %}" class="btn-warning-home-a">Модель</a>
+                            <a href="{% url 'app_image_categorize:model_plots_for_model' %}" class="btn-warning-home-a">Робота моделі</a>
+                        </div>
+                    </div>
+                </form>
+
+                {% if uploaded_image_url %}
+                <div class="card">
+                    <img src="{{ uploaded_image_url }}" class="card-img-top" alt="Uploaded Image">
+                    <div class="card-body">
+                        <p>{{ output_text | linebreaks }}</p>
+                    </div>
+                </div>
+
+
+                {% endif %}
+            </div>
+
+    </div>
+{% endblock %}
+
+

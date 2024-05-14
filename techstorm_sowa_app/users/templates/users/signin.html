@@ -1,0 +1,79 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=0.85, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>SIGN IN</title>
+     <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/blog/">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3">
+    <link href="https://fonts.googleapis.com/css?family=Playfair&#43;Display:700,900&amp;display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/7199f58f9c.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/static/user/css/signin_up.css">
+
+</head>
+  {% load socialaccount %}
+<body class="text-center">
+    <div class="main_top">
+        <a href="/" type="button"
+                       class="btn-outline-success-signin">На головну</a>
+        <main class="form-signin">
+            <form class="form-signin-signin" method="post" autocomplete="off">
+                {% csrf_token %}
+                <h1 class="h1-mb-signin">SIGN IN</h1>
+                {% if messages %}
+                    {% for message in messages %}
+                <div {% if message.tags %} class="alert alert-{{message.tags}}" {% endif %} role="alert">
+                    {{message}}
+                </div>
+                    {% endfor %}
+                {% endif%}
+                {% if form.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{form.non_field_errors}}
+                </div>
+                {% endif %}
+
+                <div class="form-floating">
+                      <div class="mb-3">
+                          <lable class="form-label">USERNAME</lable>
+                          {{form.username}}
+                      </div>
+                      <span>{{form.errors.username}}</span>
+                </div>
+                <div class="form-floating">
+                    <div class="mb-3">
+                        <lable class="form-label">PASSWORD</lable>
+                        {{form.password}}
+                     </div>
+                    <span>{{form.errors.password}}</span>
+                </div>
+                <button id="profile-button" class="btn_signin" type="submit">Sign in</button>
+                <a href="{% provider_login_url 'google' %}" class="google-btn">
+                     <i class="fa-brands fa-google"></i>
+                    <span class="btn-text">GOOGLE</span>
+                </a>
+                <div style="display: flex; align-items: center; padding-top: 2em;">
+                  <hr style="flex: 1; margin-right: 10px; color: black; width: 5em;">
+                  <span>or</span>
+                  <hr style="flex: 1; margin-left: 10px; color: black;   width: 5em;">
+                </div>
+                <div class="small-text-center">
+
+                      <a href="{% url 'users:password_reset' %}" class="text-center"><i>Forgot Password?</i></a>
+                </div>
+            </form>
+            <div class="down">
+                <p class="down-a">Не маєте облікового запису? <a href="{% url 'users:register' %}">Зареєструйтеся</a></p>
+            </div>
+        </main>
+    </div>
+    <footer>
+        <p class="p_signin">&copy; 2022 Garden Growe</p>
+    </footer>
+
+</body>
+</html>
